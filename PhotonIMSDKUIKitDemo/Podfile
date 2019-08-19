@@ -1,0 +1,21 @@
+
+source 'https://github.com/cocoapods/specs.git'
+source 'https://github.com/cosmos33/MMSpecs'
+platform :ios, '10.0'
+inhibit_all_warnings!
+
+target :PhotonIMSDKUIKitDemo do
+    # --------------------- 第三方Pod -----------------------
+    pod 'AFNetworking', '3.2.1'
+    pod 'SDWebImage', '4.4.7'
+    pod 'Masonry', '1.1.0'
+    pod 'MJRefresh', '3.2.0'
+    pod 'SVProgressHUD', '2.2.5'
+    pod 'MBProgressHUD', '1.1.0'
+    pod 'FMDB', '2.7.2'
+    pod 'MMKV','1.0.22'
+    pod 'MDLog','1.0.0'
+    pod 'PhotonPushSDK','0.0.9'
+    pod 'PhotonIMSDK','0.0.2'
+    pod 'PhotonIMSDK-UIKit',:path=>'..'
+end
