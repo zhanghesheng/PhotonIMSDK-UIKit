@@ -26,7 +26,7 @@
     PhotonIMClient *imclient = [PhotonIMClient sharedClient];
     PhotonWeakSelf(self);
     dispatch_block_t block = ^(void){
-       weakself.anchorMsgId = [[self.items.firstObject userInfo] messagID];
+       weakself.anchorMsgId = [[self.items.firstObject userInfo] messageID];
        NSArray<PhotonIMMessage *>* messages = [imclient findMessageListByIdRange:chatType chatWith:chatWith anchorMsgId:weakself.anchorMsgId beforeAuthor:beforeAnchor asc:asc size:(int)weakself.pageSize];
         NSMutableArray *items = [NSMutableArray array];
         for (PhotonIMMessage *msg in messages) {
@@ -124,7 +124,7 @@
     PhotonBaseChatItem *tempItem = nil;
     for (PhotonBaseChatItem *item in self.items) {
         PhotonIMMessage *tempMsg = item.userInfo;
-        if ([tempMsg.messagID isEqualToString:messag.withdrawMsgID]) {
+        if ([tempMsg.messageID isEqualToString:messag.withdrawMsgID]) {
             tempItem = item;
         }
     }
@@ -145,7 +145,7 @@
         for (NSString *msgID in readMsgIds) {
             for (PhotonBaseChatItem *item in self.items) {
                 PhotonIMMessage *tempMsg = item.userInfo;
-                if ([tempMsg.messagID isEqualToString:msgID]) {
+                if ([tempMsg.messageID isEqualToString:msgID]) {
                     tempMsg.messageStatus = PhotonIMMessageStatusSentRead;
                     ret = YES;
                 }

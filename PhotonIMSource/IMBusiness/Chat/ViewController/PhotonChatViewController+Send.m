@@ -121,7 +121,7 @@
     BOOL ret  = NO;
     NSArray *tempItems = [self.model.items copy];
     for (PhotonBaseChatItem *item in tempItems) {
-        if ([[item.userInfo messagID] isEqualToString:[message messagID]]) {
+        if ([[item.userInfo messageID] isEqualToString:[message messageID]]) {
             ((PhotonIMMessage *)item.userInfo).messageStatus = [message messageStatus];
             ret = YES;
         }
