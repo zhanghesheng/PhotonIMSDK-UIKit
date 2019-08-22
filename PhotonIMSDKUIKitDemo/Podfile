@@ -3,7 +3,7 @@ source 'https://github.com/cocoapods/specs.git'
 source 'https://github.com/cosmos33/MMSpecs'
 platform :ios, '10.0'
 inhibit_all_warnings!
-
+use_frameworks!
 target :PhotonIMSDKUIKitDemo do
     # --------------------- 第三方Pod -----------------------
     pod 'AFNetworking', '3.2.1'
@@ -15,6 +15,6 @@ target :PhotonIMSDKUIKitDemo do
     pod 'MDLog','1.0.0'
     pod 'PhotonPushSDK','0.0.9'
     pod 'PhotonIMSDK','~>1.0.0'
-#    pod 'PhotonIMSDK-UIKit','~>1.0.0'
-    pod 'PhotonIMSDK-UIKit',:path=>'../'
+    pod 'PhotonIMSDK-UIKit','~>1.0.0'
+#    pod 'PhotonIMSDK-UIKit',:path=>'../'
 end

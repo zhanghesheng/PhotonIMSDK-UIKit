@@ -15,7 +15,7 @@
 		323D1D45230AA0BD007A937E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 323D1D43230AA0BD007A937E /* LaunchScreen.storyboard */; };
 		323D1D48230AA0BD007A937E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D47230AA0BD007A937E /* main.m */; };
 		323D1D52230AA0BD007A937E /* PhotonIMSDKUIKitDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D51230AA0BD007A937E /* PhotonIMSDKUIKitDemoUITests.m */; };
-		346D585CA52E8F8CBF9F6C61 /* libPods-PhotonIMSDKUIKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C74326FF7E6DBA4F5EDD8522 /* libPods-PhotonIMSDKUIKitDemo.a */; };
+		AEDE24D748EEA3101F382F0E /* Pods_PhotonIMSDKUIKitDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BFB8047DEF6BD9220758366 /* Pods_PhotonIMSDKUIKitDemo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,9 +44,9 @@
 		323D1D4D230AA0BD007A937E /* PhotonIMSDKUIKitDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotonIMSDKUIKitDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		323D1D51230AA0BD007A937E /* PhotonIMSDKUIKitDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotonIMSDKUIKitDemoUITests.m; sourceTree = "<group>"; };
 		323D1D53230AA0BD007A937E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3BFB8047DEF6BD9220758366 /* Pods_PhotonIMSDKUIKitDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PhotonIMSDKUIKitDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		664596D9754AF8DF50FA8BB1 /* Pods-PhotonIMSDKUIKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotonIMSDKUIKitDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		884482BA76AF36FA18DC24F8 /* Pods-PhotonIMSDKUIKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PhotonIMSDKUIKitDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo.release.xcconfig"; sourceTree = "<group>"; };
-		C74326FF7E6DBA4F5EDD8522 /* libPods-PhotonIMSDKUIKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PhotonIMSDKUIKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				346D585CA52E8F8CBF9F6C61 /* libPods-PhotonIMSDKUIKitDemo.a in Frameworks */,
+				AEDE24D748EEA3101F382F0E /* Pods_PhotonIMSDKUIKitDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,7 +118,7 @@
 		C196209B33DEEB19D83B9D19 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C74326FF7E6DBA4F5EDD8522 /* libPods-PhotonIMSDKUIKitDemo.a */,
+				3BFB8047DEF6BD9220758366 /* Pods_PhotonIMSDKUIKitDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -144,6 +144,7 @@
 				323D1D32230AA0BC007A937E /* Frameworks */,
 				323D1D33230AA0BC007A937E /* Resources */,
 				BB6691F33B6FB4C6E2A24869 /* [CP] Copy Pods Resources */,
+				DF58D699297F5B38AAD50A37 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -255,7 +256,6 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources.sh",
-				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_ROOT}/PhotonIMSDK/Products/PhotonImResource.bundle",
 				"${PODS_ROOT}/../../PhotonIMSource/Resource/Chat.xcassets",
 				"${PODS_ROOT}/../../PhotonIMSource/Resource/Common.xcassets",
@@ -264,20 +264,45 @@
 				"${PODS_ROOT}/../../PhotonIMSource/Resource/Mine.xcassets",
 				"${PODS_ROOT}/../../PhotonIMSource/Resource/FaceEmoji.json",
 				"${PODS_ROOT}/PhotonPushSDK/Frameworks/pushBudle.bundle",
-				"${PODS_ROOT}/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PhotonImResource.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FaceEmoji.json",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/pushBudle.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SVProgressHUD.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DF58D699297F5B38AAD50A37 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
+				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
+				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
+				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
