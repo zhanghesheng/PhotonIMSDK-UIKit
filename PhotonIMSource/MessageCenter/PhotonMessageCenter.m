@@ -26,7 +26,7 @@ static PhotonMessageCenter *center = nil;
 @property (nonatomic, strong, nullable)PhotonIMTimer   *timer;
 @end
 
-#define TOKENKEY [NSString stringWithFormat:@"photonim_token_%@",[PhotonContent currentUser].userID]
+#define TOKENKEY [NSString stringWithFormat:@"photonim_token_%@",[PhotonContent userDetailInfo].userID]
 @implementation PhotonMessageCenter
 + (instancetype)sharedCenter{
     static dispatch_once_t onceToken;
@@ -38,8 +38,16 @@ static PhotonMessageCenter *center = nil;
     return center;
 }
 
-- (void)initPhtonIMSDK{
-    [[PhotonIMClient sharedClient] registerIMClientWithAppid:APP_ID];
+- (void)addMessageHandler:(id<PhotonMessageCenterProtocol>)handler{
+    _handler = handler;
+}
+
+- (void)initPhtonIMSDK:(NSString *)appid{
+    if (appid) {
+        [[PhotonIMClient sharedClient] registerIMClientWithAppid:appid];
+    }else{
+        [[PhotonIMClient sharedClient] registerIMClientWithAppid:APP_ID];
+    }
     [[PhotonIMClient sharedClient] setPhotonIMDBMode:PhotonIMDBModeDBAsync];
     
     [[PhotonIMClient sharedClient] openPhotonIMLog:YES];
@@ -52,7 +60,7 @@ static PhotonMessageCenter *center = nil;
 }
 
 - (void)login{
-    [[PhotonIMClient sharedClient] bindCurrentUserId:[PhotonContent currentUser].userID];
+    [[PhotonIMClient sharedClient] bindCurrentUserId:[PhotonContent userDetailInfo].userID];
     [self getToken];
 }
 
@@ -109,7 +117,7 @@ static PhotonMessageCenter *center = nil;
 - (void)sendTextMessage:(PhotonTextMessageChatItem *)item conversation:(nullable PhotonIMConversation *)conversation completion:(nullable CompletionBlock)completion{
     // 文本消息，直接构建文本消息对象发送
     PhotonIMMessage *message =[[PhotonIMMessage alloc] init];
-    message.fr = [PhotonContent currentUser].userID;
+    message.fr = [PhotonContent userDetailInfo].userID;
     message.to = conversation.chatWith;
     message.chatWith = conversation.chatWith;
     message.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
@@ -126,7 +134,7 @@ static PhotonMessageCenter *center = nil;
 - (void)sendImageMessage:(PhotonImageMessageChatItem *)item conversation:(nullable PhotonIMConversation *)conversation completion:(nullable CompletionBlock)completion{
     // 文本消息，直接构建文本消息对象发送
     PhotonIMMessage *message =[[PhotonIMMessage alloc] init];
-    message.fr = [PhotonContent currentUser].userID;
+    message.fr = [PhotonContent userDetailInfo].userID;
     message.to = conversation.chatWith;
     message.chatWith = conversation.chatWith;
     message.timeStamp = item.timeStamp;
@@ -147,7 +155,7 @@ static PhotonMessageCenter *center = nil;
     
     // 文本消息，直接构建文本消息对象发送
     PhotonIMMessage *message =[[PhotonIMMessage alloc] init];
-    message.fr = [PhotonContent currentUser].userID;
+    message.fr = [PhotonContent userDetailInfo].userID;
     message.to = conversation.chatWith;
     message.chatWith = conversation.chatWith;
     message.timeStamp = item.timeStamp;
@@ -174,18 +182,27 @@ static PhotonMessageCenter *center = nil;
     [[PhotonMessageCenter sharedCenter] insertOrUpdateMessage:message];
     // 先做图片上传处理，获得资源地址后构建图片消息对象发送消息
     PhotonIMImageBody *body =(PhotonIMImageBody *)message.messageBody;
-    PhotonUploadFileInfo *fileInfo = [[PhotonUploadFileInfo alloc]init];
-    fileInfo.name = @"fileUpload";
-    fileInfo.fileName = @"chatimage.jpg";
-    fileInfo.mimeType = @"image/jpeg";
-    fileInfo.fileURLString = [[PhotonMessageCenter sharedCenter] getImageFilePath:message.chatWith fileName:body.localFileName];
+    NSString *filePath = [[PhotonMessageCenter sharedCenter] getImageFilePath:message.chatWith fileName:body.localFileName];
     PhotonWeakSelf(self)
-    [[PhotonFileUploadManager defaultManager] uploadRequestMethodWithMutiFile:PHOTON_IMAGE_UPLOAD_PATH paramter:nil fromFiles:@[fileInfo] progressBlock:^(NSProgress * _Nonnull progress) {
-    } completion:^(NSDictionary * _Nonnull dict) {
-        [weakself p_sendMessag:message result:dict completion:completion];
-    } failure:^(PhotonErrorDescription * _Nonnull error) {
-        [weakself p_sendMessag:message result:nil completion:completion];
-    }];
+    if (self.handler && [self.handler respondsToSelector:@selector(uploadImage:completion:)]) {
+        [self.handler uploadImage:filePath completion:^(BOOL succeed, NSString * _Nullable url, NSString * _Nullable thumImageUrl) {
+            [weakself p_sendMessag:message url:url thumUrl:thumImageUrl completion:completion];
+        }];
+    }else{
+        PhotonUploadFileInfo *fileInfo = [[PhotonUploadFileInfo alloc]init];
+        fileInfo.name = @"fileUpload";
+        fileInfo.fileName = @"chatimage.jpg";
+        fileInfo.mimeType = @"image/jpeg";
+        fileInfo.fileURLString = filePath;
+        [[PhotonFileUploadManager defaultManager] uploadRequestMethodWithMutiFile:PHOTON_IMAGE_UPLOAD_PATH paramter:nil fromFiles:@[fileInfo] progressBlock:^(NSProgress * _Nonnull progress) {
+        } completion:^(NSDictionary * _Nonnull dict) {
+            NSString *fileURL = [[[[dict objectForKey:@"data"] isNil] objectForKey:@"url"] isNil];
+            [weakself p_sendMessag:message url:fileURL thumUrl:nil completion:completion];
+        } failure:^(PhotonErrorDescription * _Nonnull error) {
+            [weakself p_sendMessag:message url:nil thumUrl:nil completion:completion];
+        }];
+    }
+    
 }
 
 - (void)p_sendVoiceMessage:(PhotonIMMessage *)message completion:(nullable CompletionBlock)completion{
@@ -193,32 +210,44 @@ static PhotonMessageCenter *center = nil;
     [[PhotonMessageCenter sharedCenter] insertOrUpdateMessage:message];
     // 先做图片上传处理，获得资源地址后构建图片消息对象发送消息
     PhotonIMAudioBody *body =(PhotonIMAudioBody *)message.messageBody;
-    PhotonUploadFileInfo *fileInfo = [[PhotonUploadFileInfo alloc]init];
-    fileInfo.name = @"fileUpload";
-    fileInfo.fileName = @"chataudio.opus";
-    fileInfo.mimeType = @"audio/opus";
-    fileInfo.fileURLString = [[PhotonMessageCenter sharedCenter] getVoiceFilePath:message.chatWith fileName:body.localFileName];
+     NSString *filePath = [[PhotonMessageCenter sharedCenter] getImageFilePath:message.chatWith fileName:body.localFileName];
     PhotonWeakSelf(self)
-    [[PhotonFileUploadManager defaultManager] uploadRequestMethodWithMutiFile:PHOTON_AUDIO_UPLOAD_PATH paramter:nil fromFiles:@[fileInfo] progressBlock:^(NSProgress * _Nonnull progress) {
-    } completion:^(NSDictionary * _Nonnull dict) {
-        [weakself p_sendMessag:message result:dict completion:completion];
-    } failure:^(PhotonErrorDescription * _Nonnull error) {
-        [weakself p_sendMessag:message result:nil completion:completion];
-    }];
+    if (self.handler && [self.handler respondsToSelector:@selector(uploadVoice::completion:)]) {
+        [self.handler uploadVoice:filePath completion:^(BOOL succeed, NSString * _Nullable url) {
+            [weakself p_sendMessag:message url:url thumUrl:nil completion:completion];
+        }];
+    }else{
+        PhotonUploadFileInfo *fileInfo = [[PhotonUploadFileInfo alloc]init];
+        fileInfo.name = @"fileUpload";
+        fileInfo.fileName = @"chataudio.opus";
+        fileInfo.mimeType = @"audio/opus";
+        fileInfo.fileURLString = filePath;
+        [[PhotonFileUploadManager defaultManager] uploadRequestMethodWithMutiFile:PHOTON_AUDIO_UPLOAD_PATH paramter:nil fromFiles:@[fileInfo] progressBlock:^(NSProgress * _Nonnull progress) {
+        } completion:^(NSDictionary * _Nonnull dict) {
+            NSString *fileURL = [[[[dict objectForKey:@"data"] isNil] objectForKey:@"url"] isNil];
+            [weakself p_sendMessag:message url:fileURL thumUrl:nil completion:completion];
+        } failure:^(PhotonErrorDescription * _Nonnull error) {
+            [weakself p_sendMessag:message url:nil thumUrl:nil completion:completion];
+        }];
+    }
+   
 }
 
-- (void)p_sendMessag:(PhotonIMMessage *)message result:(NSDictionary *)result completion:(nullable CompletionBlock)completion{
-    NSString *fileURL = [[[[result objectForKey:@"data"] isNil] objectForKey:@"url"] isNil];
+- (void)p_sendMessag:(PhotonIMMessage *)message url:(NSString *)url thumUrl:(NSString *)thumUrl completion:(nullable CompletionBlock)completion{
+    
     if (!message) {
         return;
     }
-    if ([fileURL isNotEmpty]) {
+    if ([url isNotEmpty]) {
         if(message.messageType == PhotonIMMessageTypeImage){
             PhotonIMImageBody *body = (PhotonIMImageBody *)message.messageBody;
-            body.url = fileURL;
+            body.url = url;
+            if([thumUrl isNotEmpty]){
+                body.thumbURL = thumUrl;
+            }
         }else if(message.messageType == PhotonIMMessageTypeAudio){
             PhotonIMAudioBody *body = (PhotonIMAudioBody *)message.messageBody;
-            body.url = fileURL;
+            body.url = url;
         }
         // 文件下载成功
         if (completion) {
@@ -286,7 +315,7 @@ static PhotonMessageCenter *center = nil;
 
 // 发送已读消息
 - (void)sendReadMessage:(NSArray<NSString *> *)readMsgIDs conversation:(nullable PhotonIMConversation *)conversation completion:(nullable CompletionBlock)completion{
-    [self.imClient sendReadMessage:readMsgIDs fromid:[PhotonContent currentUser].userID toid:conversation.chatWith completion:^(BOOL succeed, PhotonIMError * _Nullable error) {
+    [self.imClient sendReadMessage:readMsgIDs fromid:[PhotonContent userDetailInfo].userID toid:conversation.chatWith completion:^(BOOL succeed, PhotonIMError * _Nullable error) {
         [PhotonUtil runMainThread:^{
             if (completion) {
                 completion(succeed,error);
@@ -325,7 +354,7 @@ static PhotonMessageCenter *center = nil;
     PhotonIMMessage *sendMessage = [[PhotonIMMessage alloc] init];
     sendMessage.chatWith = conversation.chatWith;
     sendMessage.chatType = conversation.chatType;
-    sendMessage.fr = [PhotonContent currentUser].userID;
+    sendMessage.fr = [PhotonContent userDetailInfo].userID;
     sendMessage.to = conversation.chatWith;
     sendMessage.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
     sendMessage.messageType = message.messageType;
@@ -365,7 +394,8 @@ static PhotonMessageCenter *center = nil;
     }
     
 }
-- (void)clearConversationUnreadCount:(PhotonIMConversation *)conversation{
+
+- (void)clearConversationUnReadCount:(PhotonIMConversation *)conversation{
     [self.imClient clearConversationUnReadCount:conversation.chatType chatWith:conversation.chatWith];
 }
 - (void)updateConversationIgnoreAlert:(PhotonIMConversation *)conversation{
@@ -380,7 +410,7 @@ static PhotonMessageCenter *center = nil;
     if(!fileName || fileName.length == 0){
         return nil;
     }
-    NSString *path = [NSString stringWithFormat:@"%@/PhotonIM/File/%@/%@/voices", [NSFileManager documentsPath], [PhotonContent currentUser].userID,chatWith];
+    NSString *path = [NSString stringWithFormat:@"%@/PhotonIM/File/%@/%@/voices", [NSFileManager documentsPath], [PhotonContent userDetailInfo].userID,chatWith];
     if (![PhotonUtil createDirectoryIfExit:path]) {
         return nil;
     }
@@ -402,7 +432,7 @@ static PhotonMessageCenter *center = nil;
     if(!fileName || fileName.length == 0){
         return nil;
     }
-    NSString *path = [NSString stringWithFormat:@"%@/PhotonIM/File/%@/%@/images", [NSFileManager documentsPath], [PhotonContent currentUser].userID,chatWith];
+    NSString *path = [NSString stringWithFormat:@"%@/PhotonIM/File/%@/%@/images", [NSFileManager documentsPath], [PhotonContent userDetailInfo].userID,chatWith];
     if (![PhotonUtil createDirectoryIfExit:path]) {
         return nil;
     }
@@ -438,7 +468,7 @@ static PhotonMessageCenter *center = nil;
 }
 
 - (BOOL)deleteAllFile:(NSString *)chatWith{
-     NSString *path = [NSString stringWithFormat:@"%@/PhotonIM/File/%@/%@/", [NSFileManager documentsPath], [PhotonContent currentUser].userID,chatWith];
+     NSString *path = [NSString stringWithFormat:@"%@/PhotonIM/File/%@/%@/", [NSFileManager documentsPath], [PhotonContent userDetailInfo].userID,chatWith];
     bool res = [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
     return res;
 }
@@ -488,22 +518,35 @@ static PhotonMessageCenter *center = nil;
     [self getToken];
 }
 - (void)getToken{
-    NSString *token = [[MMKV defaultMMKV] getStringForKey:TOKENKEY defaultValue:@""];
-    if ([token isNotEmpty]) {
-         [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
-    }else{
-        NSMutableDictionary *paramter = [NSMutableDictionary dictionary];
-        [self.netService commonRequestMethod:PhotonRequestMethodPost queryString:PHOTON_TOKEN_PATH paramter:paramter completion:^(NSDictionary * _Nonnull dict) {
-            NSString *token = [[dict objectForKey:@"data"] objectForKey:@"token"];
-            [[MMKV defaultMMKV] setString:token forKey:TOKENKEY];
-            [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
-            PhotonLog(@"dict = %@",dict);
-        } failure:^(PhotonErrorDescription * _Nonnull error) {
-            PhotonLog(@"error = %@",error.errorMessage);
-            [PhotonUtil showAlertWithTitle:@"Token获取失败" message:error.errorMessage];
-            [self logout];
+    if (self.handler  && [self.handler respondsToSelector:@selector(requestLoginToken:)]) {
+        [self.handler requestLoginToken:^(BOOL succeed, NSString * _Nullable token) {
+            if (succeed) {
+                if ([token isNotEmpty]) {
+                    [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
+                }
+            }else{
+                 [self logout];
+            }
         }];
+    }else{
+        NSString *token = [[MMKV defaultMMKV] getStringForKey:TOKENKEY defaultValue:@""];
+        if ([token isNotEmpty]) {
+            [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
+        }else{
+            NSMutableDictionary *paramter = [NSMutableDictionary dictionary];
+            [self.netService commonRequestMethod:PhotonRequestMethodPost queryString:PHOTON_TOKEN_PATH paramter:paramter completion:^(NSDictionary * _Nonnull dict) {
+                NSString *token = [[dict objectForKey:@"data"] objectForKey:@"token"];
+                [[MMKV defaultMMKV] setString:token forKey:TOKENKEY];
+                [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
+                PhotonLog(@"dict = %@",dict);
+            } failure:^(PhotonErrorDescription * _Nonnull error) {
+                PhotonLog(@"error = %@",error.errorMessage);
+                [PhotonUtil showAlertWithTitle:@"Token获取失败" message:error.errorMessage];
+//                [self logout];
+            }];
+        }
     }
+   
 }
 
 - (PhotonNetworkService *)netService{

@@ -76,22 +76,19 @@
 }
 + (PhotonUser *)userDetailInfo{
     // TODO: 在数据库中获取当前用户的信息，接入方可接入自己的实现方式处理profile
-    
-//    PhotonDBUserStore *userDB = [[PhotonDBUserStore alloc] init];
-//    PhotonUser *user = [userDB getFriendsByUid:[PhotonContent currentUser].userID friendID:[PhotonContent currentUser].userID];
+    if (([PhotonMessageCenter sharedCenter].handler && [[PhotonMessageCenter sharedCenter].handler respondsToSelector:@selector(getCurrentUserInfo)])) {
+        return [[PhotonMessageCenter sharedCenter].handler getCurrentUserInfo];
+    }
     return nil;
 }
 
 + (PhotonUser *)friendDetailInfo:(NSString *)fid{
-    // TODO: 在数据库中获取当前好友的信息，接入方可接入自己的实现方式处理profile
-//    PhotonDBUserStore *userDB = [[PhotonDBUserStore alloc] init];
-//    PhotonUser *user = [userDB getFriendsByUid:[PhotonContent currentUser].userID friendID:fid];
+    if (([PhotonMessageCenter sharedCenter].handler && [[PhotonMessageCenter sharedCenter].handler respondsToSelector:@selector(getFriendInfo:)])) {
+        return [[PhotonMessageCenter sharedCenter].handler getFriendInfo:fid];
+    }
     return nil;
 }
 + (void)addFriendToDB:(PhotonUser *)user{
-     // TODO: 存储当前用户的profile信息，接入方可接入自己的实现方式处理profile
-//     PhotonDBUserStore *userDB = [[PhotonDBUserStore alloc] init];
-//    [userDB addFriend:user forUid:[PhotonContent currentUser].userID];
 }
 
 + (void)logout{

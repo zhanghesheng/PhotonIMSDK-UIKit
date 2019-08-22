@@ -12,8 +12,8 @@
 @implementation PhotonUtil
 
 + (NSString *)getCookie{
-    if ([[PhotonContent currentUser].sessionID isNotEmpty]) {
-        NSString *cookie = [NSString stringWithFormat:@"sessionId=%@",[PhotonContent currentUser].sessionID];
+    if ([[PhotonContent userDetailInfo].sessionID isNotEmpty]) {
+        NSString *cookie = [NSString stringWithFormat:@"sessionId=%@",[PhotonContent userDetailInfo].sessionID];
         return cookie;
     }
     return @"";
@@ -34,7 +34,7 @@
     return [[NSFileManager defaultManager] fileExistsAtPath:path];
 }
 + (NSString *)getDownLoadFilePath:(NSString *)fileName{
-    NSString *path = [NSString stringWithFormat:@"%@/User/%@/PhotonIM/Local/", [NSFileManager documentsPath], [PhotonContent currentUser].userID];
+    NSString *path = [NSString stringWithFormat:@"%@/User/%@/PhotonIM/Local/", [NSFileManager documentsPath], [PhotonContent userDetailInfo].userID];
     if (![self createDirectoryIfExit:path]) {
         return nil;
     }

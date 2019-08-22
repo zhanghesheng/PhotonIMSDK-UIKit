@@ -13,21 +13,48 @@
 #import "PhotonTextMessageChatItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
+@protocol PhotonMessageCenterProtocol <NSObject>
+
+@optional
+/**
+ 获取im loginToken
+
+ @param completion <#completion description#>
+ */
+- (void)requestLoginToken:(void(^)(BOOL succeed,NSString *_Nullable token))completion;
+
+// 获取当前用户的信息
+- (PhotonUser *)getCurrentUserInfo;
+
+// 获取对方好友的信息
+- (PhotonUser *)getFriendInfo:(NSString *)fid;
+//上传图片
+- (void)uploadImage:(NSString *)filePath completion:(void(^)(BOOL succeed,NSString *_Nullable url,NSString *_Nullable thumImageUrl))completion;
+
+// 上传语音
+- (void)uploadVoice:(NSString *)filePath completion:(void(^)(BOOL succeed,NSString *_Nullable url))completion;
+
+
+@end
+
 typedef void(^CompletionBlock) (BOOL succeed, PhotonIMError * _Nullable error);
 @protocol PhotonMessageProtocol <PhotonIMClientProtocol>
 @optional
 - (void)sendMessageResultCallBack:(PhotonIMMessage *)message;
 @end
 @interface PhotonMessageCenter : NSObject
+
+@property (nonatomic, strong, readonly)id<PhotonMessageCenterProtocol>handler;
+
 + (instancetype)sharedCenter;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
-
+- (void)addMessageHandler:(id<PhotonMessageCenterProtocol>)handler;
 /**
  初始化话IMSDK
  */
-- (void)initPhtonIMSDK;
+- (void)initPhtonIMSDK:(nullable NSString *)appid;
 
 /**
  登录

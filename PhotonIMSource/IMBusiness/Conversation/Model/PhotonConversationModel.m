@@ -44,9 +44,9 @@
             }];
         }];
     }
-    BOOL excute = [[MMKV defaultMMKV] getBoolForKey:[PhotonContent currentUser].userID];
+    BOOL excute = [[MMKV defaultMMKV] getBoolForKey:[PhotonContent userDetailInfo].userID];
     if (conversations.count == 0 && !excute) {
-        [[MMKV defaultMMKV] setBool:YES forKey:[PhotonContent currentUser].userID];
+        [[MMKV defaultMMKV] setBool:YES forKey:[PhotonContent userDetailInfo].userID];
         __weak typeof(self)weakSelf = self;
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         if (params && params.count > 0) {

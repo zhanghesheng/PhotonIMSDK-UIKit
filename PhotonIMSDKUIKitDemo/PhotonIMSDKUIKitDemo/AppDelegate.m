@@ -7,7 +7,9 @@
 //
 
 #import "AppDelegate.h"
-
+#import "PhotonMessageCenter.h"
+#import "ViewController.h"
+#import "PhotonIMSDKMessageHandler.h"
 @interface AppDelegate ()
 
 @end
@@ -17,9 +19,24 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [[PhotonMessageCenter sharedCenter] initPhtonIMSDK:nil];
+    PhotonIMSDKMessageHandler *handler = [[PhotonIMSDKMessageHandler alloc] init];
+    [[PhotonMessageCenter sharedCenter] addMessageHandler:handler];
+    
+    ViewController *LoginVCL = [[ViewController alloc] init];
+    
+    UINavigationController *navictl = addNavigationController(LoginVCL);
+    [self.window setRootViewController:navictl];
+    [self.window addSubview:navictl.view];
+    [self.window makeKeyAndVisible];
     return YES;
 }
 
+UINavigationController *addNavigationController(UIViewController *viewController)
+{
+    UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:viewController];
+    return navC;
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

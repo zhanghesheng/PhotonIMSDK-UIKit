@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		322B8CB5230D6625002E5B95 /* PhotonIMSDKMessageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 322B8CB4230D6625002E5B95 /* PhotonIMSDKMessageHandler.m */; };
 		323D1D3A230AA0BC007A937E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D39230AA0BC007A937E /* AppDelegate.m */; };
 		323D1D3D230AA0BC007A937E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D3C230AA0BC007A937E /* ViewController.m */; };
 		323D1D40230AA0BC007A937E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 323D1D3E230AA0BC007A937E /* Main.storyboard */; };
@@ -28,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		322B8CB3230D6625002E5B95 /* PhotonIMSDKMessageHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotonIMSDKMessageHandler.h; sourceTree = "<group>"; };
+		322B8CB4230D6625002E5B95 /* PhotonIMSDKMessageHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotonIMSDKMessageHandler.m; sourceTree = "<group>"; };
 		323D1D35230AA0BC007A937E /* PhotonIMSDKUIKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotonIMSDKUIKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		323D1D38230AA0BC007A937E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		323D1D39230AA0BC007A937E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -92,6 +95,8 @@
 				323D1D39230AA0BC007A937E /* AppDelegate.m */,
 				323D1D3B230AA0BC007A937E /* ViewController.h */,
 				323D1D3C230AA0BC007A937E /* ViewController.m */,
+				322B8CB3230D6625002E5B95 /* PhotonIMSDKMessageHandler.h */,
+				322B8CB4230D6625002E5B95 /* PhotonIMSDKMessageHandler.m */,
 				323D1D3E230AA0BC007A937E /* Main.storyboard */,
 				323D1D41230AA0BD007A937E /* Assets.xcassets */,
 				323D1D43230AA0BD007A937E /* LaunchScreen.storyboard */,
@@ -252,7 +257,12 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources.sh",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_ROOT}/PhotonIMSDK/Products/PhotonImResource.bundle",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource",
+				"${PODS_ROOT}/../../PhotonIMSource/Resource/Chat.xcassets",
+				"${PODS_ROOT}/../../PhotonIMSource/Resource/Common.xcassets",
+				"${PODS_ROOT}/../../PhotonIMSource/Resource/Conversation.xcassets",
+				"${PODS_ROOT}/../../PhotonIMSource/Resource/Friends.xcassets",
+				"${PODS_ROOT}/../../PhotonIMSource/Resource/Mine.xcassets",
+				"${PODS_ROOT}/../../PhotonIMSource/Resource/FaceEmoji.json",
 				"${PODS_ROOT}/PhotonPushSDK/Frameworks/pushBudle.bundle",
 				"${PODS_ROOT}/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle",
 			);
@@ -260,7 +270,8 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PhotonImResource.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Resource",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FaceEmoji.json",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/pushBudle.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SVProgressHUD.bundle",
 			);
@@ -277,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				323D1D3D230AA0BC007A937E /* ViewController.m in Sources */,
+				322B8CB5230D6625002E5B95 /* PhotonIMSDKMessageHandler.m in Sources */,
 				323D1D48230AA0BD007A937E /* main.m in Sources */,
 				323D1D3A230AA0BC007A937E /* AppDelegate.m in Sources */,
 			);

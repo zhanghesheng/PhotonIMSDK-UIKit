@@ -50,7 +50,7 @@
 // 处理二人聊天收到的信息
 - (PhotonBaseTableItem *)wrapperMessage:(PhotonIMMessage *)message{
     PhotonBaseChatItem * resultItem = nil;
-    PhotonChatMessageFromType fromeType = [message.fr isEqualToString:[PhotonContent currentUser].userID]?PhotonChatMessageFromSelf:PhotonChatMessageFromFriend;
+    PhotonChatMessageFromType fromeType = [message.fr isEqualToString:[PhotonContent userDetailInfo].userID]?PhotonChatMessageFromSelf:PhotonChatMessageFromFriend;
     // 处理撤回的消息
     if (message.messageStatus == PhotonIMMessageStatusRecall) {
         PhotonChatNoticItem *noticItem = [[PhotonChatNoticItem alloc] init];
