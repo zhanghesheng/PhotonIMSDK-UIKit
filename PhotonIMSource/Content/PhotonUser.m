@@ -52,7 +52,6 @@
                 user.userID = [[profile objectForKey:@"userId"] isNil];
                 user.nickName = [[profile objectForKey:@"nickname"] isNil];
                 user.avatarURL = [[profile objectForKey:@"avatar"] isNil];
-                [PhotonContent addFriendToDB:user];
             }
         }
        
@@ -84,7 +83,6 @@
             user.userID = [[profile objectForKey:@"userId"] isNil];
             user.nickName = [[profile objectForKey:@"nickname"] isNil];
             user.avatarURL = [[profile objectForKey:@"avatar"] isNil];
-            [PhotonContent addFriendToDB:user];
         }
     }
 }

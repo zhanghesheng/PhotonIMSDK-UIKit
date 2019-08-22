@@ -13,15 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PhotonContent : NSObject
 + (instancetype)sharedInstance;
 + (id<UIApplicationDelegate>)sharedAppDelegate;
-+ (PhotonUser *)currentUser;
-+ (void)persistenceCurrentUser;
-
 + (PhotonUser *)userDetailInfo;
-
 + (PhotonUser *)friendDetailInfo:(NSString *)fid;
-+ (void)addFriendToDB:(PhotonUser *)user;
-+ (void)logout;
-+ (void)login;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -53,27 +53,6 @@
 + (PhotonUser *)currentUser{
     return [PhotonContent sharedInstance].currentUser;
 }
-
-+ (void)persistenceCurrentUser{
-    NSMutableDictionary *userDict = [NSMutableDictionary dictionary];
-    PhotonUser *user = [self currentUser];
-    if ([user.userID isNotEmpty]) {
-        [userDict setValue:user.userID forKey:@"photon_user_id"];
-    }
-    if ([user.userName isNotEmpty]) {
-        [userDict setValue:user.userName forKey:@"photon_user_name"];
-    }
-    if ([user.sessionID isNotEmpty]) {
-        [userDict setValue:user.sessionID forKey:@"photon_user_sessionid"];
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:userDict forKey:@"photon_current_user"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-+ (void)clearCurrentUser{
-    [PhotonContent sharedInstance].currentUser = [[PhotonUser alloc] init];
-    [[NSUserDefaults standardUserDefaults]  removeObjectForKey:@"photon_current_user"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
 + (PhotonUser *)userDetailInfo{
     // TODO: 在数据库中获取当前用户的信息，接入方可接入自己的实现方式处理profile
     if (([PhotonMessageCenter sharedCenter].handler && [[PhotonMessageCenter sharedCenter].handler respondsToSelector:@selector(getCurrentUserInfo)])) {
@@ -87,19 +66,5 @@
         return [[PhotonMessageCenter sharedCenter].handler getFriendInfo:fid];
     }
     return nil;
-}
-+ (void)addFriendToDB:(PhotonUser *)user{
-}
-
-+ (void)logout{
-    [PhotonUtil runMainThread:^{
-        [self clearCurrentUser];
-    }];
-   
-}
-
-+ (void)login{
-    [PhotonUtil runMainThread:^{
-    }];
 }
 @end

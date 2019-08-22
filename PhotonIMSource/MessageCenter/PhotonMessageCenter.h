@@ -23,6 +23,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)requestLoginToken:(void(^)(BOOL succeed,NSString *_Nullable token))completion;
 
+
+/**
+ 是否登录成功
+
+ @param succeed YES: 是，NO 是登录失败
+ */
+- (void)loginSucceed:(BOOL)succeed;
+
+/**
+ 当前账号被踢掉
+ */
+- (void)KickAccount;
+
 // 获取当前用户的信息
 - (PhotonUser *)getCurrentUserInfo;
 

@@ -7,7 +7,6 @@
 //  业务端处理消息的管理类，单利的方式实现
 
 #import "PhotonMessageCenter.h"
-#import <MMKV/MMKV.h>
 #import "PhotonFileUploadManager.h"
 #import "PhotonDownLoadFileManager.h"
 #import "PhotonNetworkService.h"
@@ -24,6 +23,8 @@ static PhotonMessageCenter *center = nil;
 @property (nonatomic, strong, nullable)PhotonIMThreadSafeArray *readMsgIdscCache;
 @property (nonatomic, strong, nullable)NSDictionary*readMsgIdscDict;
 @property (nonatomic, strong, nullable)PhotonIMTimer   *timer;
+
+@property (nonatomic, strong,nullable) NSMutableArray<PhotonIMMessage *> *messages;
 @end
 
 #define TOKENKEY [NSString stringWithFormat:@"photonim_token_%@",[PhotonContent userDetailInfo].userID]
@@ -61,13 +62,12 @@ static PhotonMessageCenter *center = nil;
 
 - (void)login{
     [[PhotonIMClient sharedClient] bindCurrentUserId:[PhotonContent userDetailInfo].userID];
+     _messages = [[[PhotonIMClient sharedClient] getAllSendingMessages] mutableCopy];
     [self getToken];
 }
 
 - (void)logout{
     [[PhotonIMClient sharedClient] logout];
-    [[MMKV defaultMMKV] removeValueForKey:TOKENKEY];
-    [PhotonContent logout];
 }
 
 - (NSInteger)unreadMsgCount{
@@ -293,24 +293,41 @@ static PhotonMessageCenter *center = nil;
 
 // 重新发送未发送完成的消息
 - (void)reSendAllSendingMessages{
-    NSArray<PhotonIMMessage *> *messages = [[PhotonIMClient sharedClient] getAllSendingMessages];
-    for(PhotonIMMessage *message in messages){
-        message.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
-        if(message.messageType == PhotonIMMessageTypeImage || message.messageType == PhotonIMMessageTypeAudio){
-            PhotonIMBaseBody *body = message.messageBody;
-            if ([body.url isNotEmpty]) {// 文件上传完成，直接发送
-                [self _sendMessage:message completion:nil];
-            }else{// 文件上传未完成，先上再发送
-                if (message.messageType == PhotonIMMessageTypeImage) {
-                    [self p_sendImageMessage:message completion:nil];
-                }else if (message.messageType == PhotonIMMessageTypeAudio){
-                    [self p_sendVoiceMessage:message completion:nil];
+    if(self.messages){
+        __weak typeof(self)weakSelf = self;
+        NSArray<PhotonIMMessage *> *messages = [self.messages copy];
+        for(PhotonIMMessage *message in messages){
+            message.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
+            if(message.messageType == PhotonIMMessageTypeImage || message.messageType == PhotonIMMessageTypeAudio){
+                PhotonIMBaseBody *body = message.messageBody;
+                if ([body.url isNotEmpty]) {// 文件上传完成，直接发送
+                    [self _sendMessage:message completion:^(BOOL succeed, PhotonIMError * _Nullable error) {
+                        if (succeed) {
+                            [weakSelf.messages removeObject:message];
+                        }
+                        
+                    }];
+                }else{// 文件上传未完成，先上再发送
+                    if (message.messageType == PhotonIMMessageTypeImage) {
+                        [self p_sendImageMessage:message completion:^(BOOL succeed, PhotonIMError * _Nullable error) {
+                            if (succeed) {
+                                [weakSelf.messages removeObject:message];
+                            }
+                        }];
+                    }else if (message.messageType == PhotonIMMessageTypeAudio){
+                        [self p_sendVoiceMessage:message completion:^(BOOL succeed, PhotonIMError * _Nullable error) {
+                            if (succeed) {
+                                [weakSelf.messages removeObject:message];
+                            }
+                        }];
+                    }
                 }
+            }else if(message.messageType == PhotonIMMessageTypeText){//文本直接发送
+                [self _sendMessage:message completion:nil];
             }
-        }else if(message.messageType == PhotonIMMessageTypeText){//文本直接发送
-            [self _sendMessage:message completion:nil];
         }
     }
+    
 }
 
 // 发送已读消息
@@ -406,8 +423,6 @@ static PhotonMessageCenter *center = nil;
     [[PhotonIMClient sharedClient] saveConversation:conversation];
 }
 
-
-
 #pragma mark --------- 文件操作相关 ----------------
 
 - (NSString *)getVoiceFilePath:(NSString *)chatWith fileName:(nullable NSString *)fileName{
@@ -487,11 +502,21 @@ static PhotonMessageCenter *center = nil;
     switch (failedType) {
         case PhotonIMLoginFailedTypeTokenError:
         case PhotonIMLoginFailedTypeParamterError:{
-            [self reGetToken];
+            [PhotonUtil runMainThread:^{
+                if (self.handler  && [self.handler respondsToSelector:@selector(loginSucceed:)]){
+                    [self.handler loginSucceed:NO];
+                }
+            }];
+            
         }
             break;
         case PhotonIMLoginFailedTypeKick:{
-            [self logout];
+            [PhotonUtil runMainThread:^{
+                if (self.handler  && [self.handler respondsToSelector:@selector(KickAccount)]){
+                    [self.handler KickAccount];
+                }
+            }];
+            
         }
             break;
         default:
@@ -502,25 +527,17 @@ static PhotonMessageCenter *center = nil;
 - (void)imClientLogin:(nonnull id)client loginStatus:(PhotonIMLoginStatus)loginstatus {
     if (loginstatus ==  PhotonIMLoginStatusLoginSucceed) {
         [self reSendAllSendingMessages];
+        [PhotonUtil runMainThread:^{
+            if (self.handler  && [self.handler respondsToSelector:@selector(loginSucceed:)]){
+                [self.handler loginSucceed:YES];
+            }
+        }];
     }
-}
-
-
-- (void)networkChange:(PhotonIMNetworkStatus)networkStatus {
-}
-
-- (BOOL)imClientSync:(nonnull id)client syncStatus:(PhotonIMSyncStatus)status {
-    NSLog(@"imClientSync:(nonnull id)client syncStatus:(PhotonIMSyncStatus)status");
-    return YES;
 }
 
 
 
 #pragma mark ---- 登录相关 ----
-- (void)reGetToken{
-    [[MMKV defaultMMKV] setString:@"" forKey:TOKENKEY];
-    [self getToken];
-}
 - (void)getToken{
     if (self.handler  && [self.handler respondsToSelector:@selector(requestLoginToken:)]) {
         [self.handler requestLoginToken:^(BOOL succeed, NSString * _Nullable token) {
@@ -528,29 +545,9 @@ static PhotonMessageCenter *center = nil;
                 if ([token isNotEmpty]) {
                     [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
                 }
-            }else{
-                 [self logout];
             }
         }];
-    }else{
-        NSString *token = [[MMKV defaultMMKV] getStringForKey:TOKENKEY defaultValue:@""];
-        if ([token isNotEmpty]) {
-            [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
-        }else{
-            NSMutableDictionary *paramter = [NSMutableDictionary dictionary];
-            [self.netService commonRequestMethod:PhotonRequestMethodPost queryString:PHOTON_TOKEN_PATH paramter:paramter completion:^(NSDictionary * _Nonnull dict) {
-                NSString *token = [[dict objectForKey:@"data"] objectForKey:@"token"];
-                [[MMKV defaultMMKV] setString:token forKey:TOKENKEY];
-                [[PhotonIMClient sharedClient] loginWithToken:token extra:nil];
-                PhotonLog(@"dict = %@",dict);
-            } failure:^(PhotonErrorDescription * _Nonnull error) {
-                PhotonLog(@"error = %@",error.errorMessage);
-                [PhotonUtil showAlertWithTitle:@"Token获取失败" message:error.errorMessage];
-//                [self logout];
-            }];
-        }
     }
-   
 }
 
 - (PhotonNetworkService *)netService{

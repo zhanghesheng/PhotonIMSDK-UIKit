@@ -50,7 +50,6 @@
                 user.nickName = [[item objectForKey:@"nickname"] isNil];
                 user.avatarURL = [[item objectForKey:@"avatar"] isNil];
                 user.type = [[[item objectForKey:@"type"] isNil] intValue];
-                [PhotonContent addFriendToDB:user];
                 PhotonContactItem *conItem = [[PhotonContactItem alloc] init];
                 conItem.fIcon = user.avatarURL;
                 conItem.fNickName = user.nickName? user.nickName: user.userID;

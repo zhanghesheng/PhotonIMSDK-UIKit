@@ -145,7 +145,6 @@ static NSString *message_syncing = @"消息(收取中......)";
 - (void)conversationChange:(PhotonIMConversationEvent)envent chatType:(PhotonIMChatType)chatType chatWith:(NSString *)chatWith{
     switch (envent) {
         case PhotonIMConversationEventCreate:{
-            [self getIgnoreAlerm:chatType chatWith:chatWith];
         }
             break;
         case PhotonIMConversationEventDelete:
@@ -161,16 +160,6 @@ static NSString *message_syncing = @"消息(收取中......)";
         return;
     }
     [self.dataDispatchSource addSemaphore];
-}
-
-- (void)getIgnoreAlerm:(PhotonIMChatType)chatType chatWith:(NSString *)chatWith{
-    [[PhotonContent currentUser] getIgnoreAlert:chatWith completion:^(BOOL success, BOOL open) {
-        PhotonIMConversation *conversation = [[PhotonIMConversation alloc] init];
-        conversation.chatType = chatType;
-        conversation.chatWith = chatWith;
-        conversation.ignoreAlert = open;
-        [[PhotonMessageCenter sharedCenter] updateConversationIgnoreAlert:conversation];
-    }];
 }
 
 - (void)networkChange:(PhotonIMNetworkStatus)networkStatus{
