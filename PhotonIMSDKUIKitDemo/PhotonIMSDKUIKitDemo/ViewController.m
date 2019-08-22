@@ -44,7 +44,7 @@
     // 创建一个会话
     PhotonIMConversation *conversation = [[PhotonIMConversation alloc] init];
     conversation.chatType = PhotonIMChatTypeSingle;
-    conversation.chatWith = @"123456";
+    conversation.chatWith = @"10005";
     [[PhotonIMClient sharedClient]saveConversation:conversation];
     PhotonChatViewController *chatVCL = [[PhotonChatViewController alloc] initWithConversation:conversation];
     [self.navigationController pushViewController:chatVCL animated:YES];
