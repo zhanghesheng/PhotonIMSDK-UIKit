@@ -402,6 +402,10 @@ static PhotonMessageCenter *center = nil;
     [self.imClient updateConversationIgnoreAlert:conversation];
 }
 
+- (void)saveConversation:(PhotonIMConversation *)conversation{
+    [[PhotonIMClient sharedClient] saveConversation:conversation];
+}
+
 
 
 #pragma mark --------- 文件操作相关 ----------------

@@ -145,6 +145,8 @@ typedef void(^CompletionBlock) (BOOL succeed, PhotonIMError * _Nullable error);
 
 - (void)deleteMessage:(PhotonIMMessage *)message;
 
+- (void)saveConversation:(PhotonIMConversation *)conversation;
+
 - (void)deleteConversation:(PhotonIMConversation *)conversation clearChatMessage:(BOOL)clearChatMessage;
 
 - (void)clearConversationUnReadCount:(PhotonIMConversation *)conversation;
