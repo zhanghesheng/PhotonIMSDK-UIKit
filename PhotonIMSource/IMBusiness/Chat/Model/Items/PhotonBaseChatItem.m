@@ -13,7 +13,7 @@
 {
     self = [super init];
     if (self) {
-        _avatalarImgaeURL = @"";
+        _avatarURL = @"";
     }
     return self;
 }

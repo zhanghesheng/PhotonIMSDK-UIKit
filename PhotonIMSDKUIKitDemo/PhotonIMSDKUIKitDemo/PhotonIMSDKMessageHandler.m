@@ -15,6 +15,7 @@
     user.nickName = @"text1";
     user.userName = @"text1";
     user.sessionID = @"awddercdfdfsx";
+    user.avatarURL = @"http://img.momocdn.com/moment/07/72/07722C60-C9F7-31A4-DB5C-7B6A3124FA8020190822_L.jpg";
     return user;
 }
 

@@ -69,6 +69,7 @@
         }
     }
     [self.textView setText:@""];
+    [self hiddentTextViewLabel];
     [self p_reloadTextViewWithAnimation:YES];
 }
 

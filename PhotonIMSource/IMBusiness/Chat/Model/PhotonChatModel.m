@@ -38,13 +38,15 @@
         [totolItems addObjectsFromArray:self.items];
         self.items = [NSMutableArray arrayWithArray:totolItems];
         if (finish) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            [PhotonUtil runMainThread:^{
                 finish(nil);
+            }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
             });
         }
     };
-    block();
-//    [imclient runInPhotonIMDBReadQueue:block];
+    [[PhotonIMClient sharedClient] runInPhotonIMDBQueue:block];
 }
 
 // 处理二人聊天收到的信息
@@ -58,6 +60,12 @@
         noticItem.userInfo = message;
         return noticItem;
     }
+    NSString *avatarURL = nil;
+    if (fromeType == PhotonChatMessageFromSelf) {
+        avatarURL = [PhotonContent userDetailInfo].avatarURL;
+    }else{
+        avatarURL = [PhotonContent friendDetailInfo:message.fr].avatarURL;
+    }
     switch (message.messageType) {
         case PhotonIMMessageTypeText:{// 文本
             PhotonTextMessageChatItem *textItem = [[PhotonTextMessageChatItem alloc] init];
@@ -66,7 +74,7 @@
             PhotonIMTextBody * body = (PhotonIMTextBody *)message.messageBody;
             textItem.messageText = [body text];
             textItem.userInfo = message;
-            textItem.avatalarImgaeURL = [PhotonContent friendDetailInfo:message.fr].avatarURL;
+            textItem.avatarURL = avatarURL;
             resultItem = textItem;
         }
             break;
@@ -74,7 +82,7 @@
             PhotonImageMessageChatItem *imageItem = [[PhotonImageMessageChatItem alloc] init];
             imageItem.fromType = fromeType;
             imageItem.timeStamp = message.timeStamp;
-            imageItem.avatalarImgaeURL = [PhotonContent friendDetailInfo:message.fr].avatarURL;
+            imageItem.avatarURL = avatarURL;
             PhotonIMImageBody *imgBody = (PhotonIMImageBody *)message.messageBody;
             if([imgBody.thumbURL isNotEmpty]){
                 imageItem.thumURL = imgBody.thumbURL;
@@ -107,7 +115,7 @@
             audioItem.duration = audioBody.mediaTime;
             audioItem.userInfo = message;
             audioItem.isPlayed = audioBody.localMediaPlayed;
-            audioItem.avatalarImgaeURL = [PhotonContent friendDetailInfo:message.fr].avatarURL;
+            audioItem.avatarURL = avatarURL;
             resultItem = audioItem;
         }
             break;

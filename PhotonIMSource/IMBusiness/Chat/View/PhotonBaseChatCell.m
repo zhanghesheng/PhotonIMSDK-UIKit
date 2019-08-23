@@ -85,7 +85,7 @@
        [self.contentBackgroundView setImage:[UIImage imageWithColor:[UIColor colorWithHex:0xFFFFFF]]];
     }
     
-    [self.avatarBtn sd_setImageWithURL:[NSURL URLWithString:item.avatalarImgaeURL] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"tabbar_meHL"]];
+    [self.avatarBtn sd_setImageWithURL:[NSURL URLWithString:item.avatarURL] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"tabbar_meHL"]];
     
     if (item.showTime) {
         [self.timeLabel setText:item.timeText];

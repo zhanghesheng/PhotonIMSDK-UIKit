@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger,PhotonChatMessageFromType){
 /**
  消息来源者头像
  */
-@property(nonatomic, copy, nullable)NSString *avatalarImgaeURL;
+@property(nonatomic, copy, nullable)NSString *avatarURL;
 
 
 /**

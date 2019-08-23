@@ -16,7 +16,7 @@
     textItem.fromType = PhotonChatMessageFromSelf;
     textItem.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
     textItem.messageText = text;
-    textItem.avatalarImgaeURL = [PhotonContent userDetailInfo].avatarURL;
+    textItem.avatarURL = [PhotonContent userDetailInfo].avatarURL;
     [self.model.items addObject:textItem];
     [self reloadData];
     PhotonWeakSelf(self);
@@ -48,7 +48,7 @@
     PhotonImageMessageChatItem *imageItem = [[PhotonImageMessageChatItem alloc] init];
     imageItem.fromType = PhotonChatMessageFromSelf;
     imageItem.fileName = imageName;
-    imageItem.avatalarImgaeURL = [PhotonContent userDetailInfo].avatarURL;
+    imageItem.avatarURL = [PhotonContent userDetailInfo].avatarURL;
     imageItem.imageSize = image.size;
     imageItem.whRatio = image.size.width/image.size.height;
     imageItem.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
@@ -76,7 +76,7 @@
     audioItem.timeStamp = [[NSDate date] timeIntervalSince1970] * 1000.0;
     audioItem.fileName = fileName;
     audioItem.duration = duraion;
-    audioItem.avatalarImgaeURL = [PhotonContent userDetailInfo].avatarURL;
+    audioItem.avatarURL = [PhotonContent userDetailInfo].avatarURL;
     [self.model.items addObject:audioItem];
     [self reloadData];
     PhotonWeakSelf(self)
