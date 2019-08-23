@@ -140,7 +140,6 @@
 
 - (void)sendMessage:(id)message{
     PhotonIMConversation *conversation = [[PhotonIMConversation alloc] init];
-    conversation.CID = [_user userID];
     conversation.chatWith = [_user userID];
     conversation.chatType = PhotonIMChatTypeSingle;
     conversation.FName = [_user nickName];

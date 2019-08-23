@@ -51,7 +51,6 @@
         if (lists.count > 0) {
             for (NSDictionary *item in lists) {
                 PhotonIMConversation *conversation = [[PhotonIMConversation alloc] init];
-                conversation.CID = [[item objectForKey:@"userId"] isNil];
                 conversation.chatWith = [[item objectForKey:@"userId"] isNil];
                 conversation.FName = [[item objectForKey:@"nickname"] isNil];
                 conversation.FAvatarPath = [[item objectForKey:@"avatar"] isNil];
