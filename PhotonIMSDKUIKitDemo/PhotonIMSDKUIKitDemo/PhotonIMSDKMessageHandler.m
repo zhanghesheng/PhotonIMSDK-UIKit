@@ -19,7 +19,8 @@
 
 - (PhotonUser *)getFriendInfo:(NSString *)fid{
     // 业务端的profile中获取好友的信息h构建PhotonUser对象
-    return nil;
+    PhotonUser *user = [[PhotonUser alloc] initWithUserId:@"10005" userName:@"text2" avartarURL:@"http://img.momocdn.com/moment/07/72/07722C60-C9F7-31A4-DB5C-7B6A3124FA8020190822_L.jpg"];
+    return user;
 }
 
 // 业务端获取 im 登录的token

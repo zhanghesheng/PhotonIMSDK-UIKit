@@ -21,6 +21,7 @@
         _nickName = userName;
         _avatarURL = avartarURL;
     }
+    return self;
 }
 - (void)loadFriendProfile{
     __weak typeof(self)weakSelf = self;

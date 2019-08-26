@@ -26,6 +26,9 @@ static NSString *message_syncing = @"消息(收取中......)";
 @property (nonatomic, strong, nullable)MFDispatchSource  *dataDispatchSource;
 @property (nonatomic, assign)BOOL   isAppeared;
 @property (nonatomic, assign)BOOL   needRefreshData;
+@property (nonatomic, strong)PhotonIMTimer *imTimer;
+@property (nonatomic, assign)NSInteger  refreshCount;
+@property (nonatomic, assign)BOOL  isExcute;
 @end
 
 @implementation PhotonConversationListViewController
@@ -159,7 +162,32 @@ static NSString *message_syncing = @"消息(收取中......)";
         self.needRefreshData  = YES;
         return;
     }
-    [self.dataDispatchSource addSemaphore];
+    [self readyRefreshConversations];
+}
+
+-(void)readyRefreshConversations{
+    _refreshCount++;
+    __weak typeof(self)weakSelf = self;
+    if (!_imTimer) {
+        _imTimer = [PhotonIMTimer initWithInterval:2 delay:1 repeat:NO targetQueue:dispatch_get_main_queue() handler:^{
+            if (!weakSelf.isExcute) {
+                [weakSelf startRefreshConversations];
+            }
+        }];
+    }
+    if (self.refreshCount > 5) {
+        [weakSelf startRefreshConversations];
+    }
+}
+
+- (void)startRefreshConversations{
+    if (!self.isExcute) {
+        self.refreshCount = 0;
+        [self.imTimer cancel];
+        self.imTimer = nil;
+        self.isExcute = NO;
+        [self.dataDispatchSource addSemaphore];
+    }
 }
 
 - (void)networkChange:(PhotonIMNetworkStatus)networkStatus{
