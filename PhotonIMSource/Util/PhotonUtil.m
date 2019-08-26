@@ -12,10 +12,7 @@
 @implementation PhotonUtil
 
 + (NSString *)getCookie{
-    if ([[PhotonContent userDetailInfo].sessionID isNotEmpty]) {
-        NSString *cookie = [NSString stringWithFormat:@"sessionId=%@",[PhotonContent userDetailInfo].sessionID];
-        return cookie;
-    }
+  
     return @"";
 }
 + (BOOL)createDirectoryIfExit:(NSString *)dPath{

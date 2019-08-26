@@ -42,9 +42,7 @@
 
 - (IBAction)startChat1:(id)sender {
     // 创建一个会话
-    PhotonIMConversation *conversation = [[PhotonIMConversation alloc] init];
-    conversation.chatType = PhotonIMChatTypeSingle;
-    conversation.chatWith = @"10005";
+    PhotonIMConversation *conversation = [[PhotonIMConversation alloc] initWithChatType:PhotonIMChatTypeSingle chatWith:@"10005"];
     [[PhotonMessageCenter sharedCenter] saveConversation:conversation];
     
     PhotonChatViewController *chatVCL = [[PhotonChatViewController alloc] initWithConversation:conversation];

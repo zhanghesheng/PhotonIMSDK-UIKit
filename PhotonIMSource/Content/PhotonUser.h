@@ -12,10 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PhotonUser : NSObject
 /**
- 用户session id
- */
-@property (nonatomic, copy, nullable)NSString *sessionID;
-/**
  用户id
  */
 @property (nonatomic, copy, nullable)NSString *userID;
@@ -46,18 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable)NSString *remark;
 
 
-/**
- (1 单人, 2 群)
- */
-@property (nonatomic, assign) int type;
-
-- (void)loadFriendProfile;
-
-- (void)loadFriendProfileBatch:(NSArray *)remoteids completion:(void(^)(BOOL success))completion;
-
-- (void)loadFriendProfile:(NSString *)remoteid completion:(void(^)(BOOL success))completion;
-
-- (void)getIgnoreAlert:(NSString *)remoteId completion:(void(^)(BOOL success,BOOL open))completion;
+- (instancetype)initWithUserId:(NSString *)userid userName:(NSString *)userName avartarURL:(nullable NSString *)avartarURL;
 
 @end
 

@@ -13,6 +13,15 @@
 @end
 
 @implementation PhotonUser
+- (instancetype)initWithUserId:(NSString *)userid userName:(NSString *)userName avartarURL:(nullable NSString *)avartarURL{
+    self = [super init];
+    if (self) {
+        _userID = userid;
+        _userName = userName;
+        _nickName = userName;
+        _avatarURL = avartarURL;
+    }
+}
 - (void)loadFriendProfile{
     __weak typeof(self)weakSelf = self;
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];

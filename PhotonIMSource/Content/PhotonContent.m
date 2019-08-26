@@ -30,7 +30,6 @@
             NSDictionary *userDict = user;
             _currentUser.userID = [userDict objectForKey:@"photon_user_id"];
             _currentUser.userName = [userDict objectForKey:@"photon_user_name"];
-            _currentUser.sessionID = [userDict objectForKey:@"photon_user_sessionid"];
         }
     }
     return self;

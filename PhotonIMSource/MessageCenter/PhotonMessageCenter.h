@@ -15,7 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 @protocol PhotonMessageCenterProtocol <NSObject>
 
-@optional
+@required
 /**
  获取im loginToken
 
@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 获取对方好友的信息
 - (PhotonUser *)getFriendInfo:(NSString *)fid;
+
+@optional
 //上传图片
 - (void)uploadImage:(NSString *)filePath completion:(void(^)(BOOL succeed,NSString *_Nullable url,NSString *_Nullable thumImageUrl))completion;
 
@@ -64,10 +66,11 @@ typedef void(^CompletionBlock) (BOOL succeed, PhotonIMError * _Nullable error);
 + (instancetype)new NS_UNAVAILABLE;
 
 - (void)addMessageHandler:(id<PhotonMessageCenterProtocol>)handler;
+
 /**
  初始化话IMSDK
  */
-- (void)initPhtonIMSDK:(nullable NSString *)appid;
+- (void)initPhtonIMSDKWithAppid:(nullable NSString *)appid;
 
 /**
  登录

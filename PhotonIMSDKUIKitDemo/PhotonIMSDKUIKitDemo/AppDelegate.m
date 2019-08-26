@@ -19,7 +19,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [[PhotonMessageCenter sharedCenter] initPhtonIMSDK:nil];
+    [[PhotonMessageCenter sharedCenter] initPhtonIMSDKWithAppid:nil];
     PhotonIMSDKMessageHandler *handler = [[PhotonIMSDKMessageHandler alloc] init];
     [[PhotonMessageCenter sharedCenter] addMessageHandler:handler];
     

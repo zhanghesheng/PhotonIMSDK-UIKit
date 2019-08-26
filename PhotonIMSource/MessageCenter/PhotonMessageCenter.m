@@ -43,7 +43,7 @@ static PhotonMessageCenter *center = nil;
     _handler = handler;
 }
 
-- (void)initPhtonIMSDK:(NSString *)appid{
+- (void)initPhtonIMSDKWithAppid:(NSString *)appid{
     if (appid) {
         [[PhotonIMClient sharedClient] registerIMClientWithAppid:appid];
     }else{
