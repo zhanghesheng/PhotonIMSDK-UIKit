@@ -21,6 +21,7 @@ TODO: Add long description of the pod here.
   s.dependency  'SDWebImage'
   s.dependency  'AFNetworking'
   s.dependency  'MJRefresh'
+  s.dependency  'MMBase-iOS'
   s.frameworks = 'Foundation', 'UIKit','MMFoundation'
   s.public_header_files = 'PhotonIMSource/**/*.{h,m,c}'
   s.subspec 'CommonUI' do |s|

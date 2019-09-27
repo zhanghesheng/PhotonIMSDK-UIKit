@@ -94,9 +94,6 @@
             if(fromeType == PhotonChatMessageFromSelf){
                 imageItem.localPath = [[PhotonMessageCenter sharedCenter] getImageFilePath:message.chatWith fileName:imageItem.fileName];
             }
-            if (!CGSizeEqualToSize(imgBody.imageSize, CGSizeZero)) {
-                imageItem.imageSize = imgBody.imageSize;
-            }
             imageItem.whRatio = imgBody.whRatio;
             
             imageItem.userInfo = message;
@@ -148,7 +145,7 @@
 
 - (BOOL)wrapperReadMessage:(PhotonIMMessage *)message{
     BOOL ret = NO;
-    NSArray *readMsgIds = message.readMagIds;
+    NSArray *readMsgIds = message.readMsgIDs;
     if (readMsgIds.count > 0) {
         for (NSString *msgID in readMsgIds) {
             for (PhotonBaseChatItem *item in self.items) {

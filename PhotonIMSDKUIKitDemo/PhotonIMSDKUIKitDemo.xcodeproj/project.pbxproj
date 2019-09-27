@@ -254,27 +254,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources.sh",
-				"${PODS_ROOT}/PhotonIMSDK/Products/PhotonImResource.bundle",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource/Chat.xcassets",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource/Common.xcassets",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource/Conversation.xcassets",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource/Friends.xcassets",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource/Mine.xcassets",
-				"${PODS_ROOT}/../../PhotonIMSource/Resource/FaceEmoji.json",
-				"${PODS_ROOT}/PhotonPushSDK/Frameworks/pushBudle.bundle",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PhotonImResource.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FaceEmoji.json",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/pushBudle.bundle",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DF58D699297F5B38AAD50A37 /* [CP] Embed Pods Frameworks */ = {
@@ -282,27 +271,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
-				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
-				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
-				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
-				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
-				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PhotonIMSDKUIKitDemo/Pods-PhotonIMSDKUIKitDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
