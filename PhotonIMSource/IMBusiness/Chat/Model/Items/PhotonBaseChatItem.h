@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger,PhotonChatMessageFromType){
 /**
  消息来源者头像
  */
-@property(nonatomic, copy, nullable)NSString *avatarURL;
+@property(nonatomic, copy, nullable)NSString *avatalarImgaeURL;
 
 
 /**
@@ -108,6 +108,12 @@ typedef NS_ENUM(NSInteger,PhotonChatMessageFromType){
 @property(nonatomic, assign)BOOL canWithDrawMsg;
 
 @property (nonatomic, strong, nullable)NSString *localPath;
+
+
+@property (nonatomic, assign)CGSize size;
+@property (nonatomic, assign)CGFloat tempItemHeight;
+@property (nonatomic, assign)CGFloat timeHeight;
+@property (nonatomic, assign)CGFloat contentHeight;
 @end
 
 NS_ASSUME_NONNULL_END

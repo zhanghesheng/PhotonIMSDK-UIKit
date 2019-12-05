@@ -21,7 +21,6 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self.contentView addSubview:self.selectBtn];
         _selectedImage = [UIImage imageNamed:@"radiobutton_on"];
         _unSelectedImage = [UIImage imageNamed:@"radiobutton"];
     }
@@ -33,21 +32,23 @@
         return;
     }
     PhotonChatTransmitItem *item = (PhotonChatTransmitItem *)object;
-  
-    if (item.selected) {
-        [self.selectBtn setImage:_selectedImage forState:UIControlStateNormal];
+    if (!item.showSelectBtn) {
+        [self.selectBtn removeFromSuperview];
     }else{
-        [self.selectBtn setImage:_unSelectedImage forState:UIControlStateNormal];
+        [self.contentView addSubview:self.selectBtn];
+        if (item.selected) {
+            [self.selectBtn setImage:_selectedImage forState:UIControlStateNormal];
+        }else{
+            [self.selectBtn setImage:_unSelectedImage forState:UIControlStateNormal];
+        }
+        [self.selectBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.mas_equalTo(self.contentView.mas_centerY);
+            make.right.mas_equalTo(self.contentView).mas_offset(-15.0);
+            make.size.mas_equalTo(CGSizeMake(item.itemHeight, item.itemHeight));
+        }];
     }
-    
-    [self.selectBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.contentView.mas_centerY);
-        make.right.mas_equalTo(self.contentView).mas_offset(-15.0);
-        make.size.mas_equalTo(CGSizeMake(32.0, 32.0));
-    }];
-   
-}
 
+}
 
 #pragma mark --------- Getter -------
 - (UIButton *)selectBtn{
@@ -74,7 +75,7 @@
 
 
 + (CGFloat)tableView:(UITableView *)tableView rowHeightForObject:(id)object{
-    PhotonContactItem *item = (PhotonContactItem *)object;
+    PhotonBaseContactItem *item = (PhotonBaseContactItem *)object;
     return item.itemHeight;
 }
 

@@ -15,6 +15,9 @@
 #import "PhotonUtil.h"
 #import "PhotonRecorderIndicator.h"
 #import "PhotonMessageCenter.h"
+
+static NSString  *ATCharater = @"@";
+
 @interface PhotonChatPanelManager()<PhotonCharBarDelegate,
 PhotonBaseKeyBoardDelegate,
 PhotonMoreKeyBoardDelegate,
@@ -39,10 +42,10 @@ PhotonAudioRecorderDelegate>
 
 @property(nonatomic, strong, nullable)PhotonAudioRecorder  *audioRecorder;
 
-
 @property(nonatomic, strong, nullable)PhotonRecorderIndicator *recorderIndicatorView;
 
 @property(nonatomic, copy, nullable)NSString *identifier;
+
 @end
 @implementation PhotonChatPanelManager
 - (void)dealloc
@@ -107,7 +110,7 @@ PhotonAudioRecorderDelegate>
     [self addMasonry];
 }
 
-- (void)addMasonry{    
+- (void)addMasonry{
     [self.chatBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self.view);
         make.bottom.mas_equalTo(self.view).mas_offset(-SAFEAREA_INSETS_BOTTOM);
@@ -214,6 +217,18 @@ PhotonAudioRecorderDelegate>
 }
 
 #pragma mark ---- PhotonCharBarDelegate -------
+
+- (void)chatBarTextViewDidChange:(PhotonCharBar *)charBar{
+  
+    if ([charBar.currentInputText isEqualToString:ATCharater]) {
+          // 如果是@
+        if(self.delegate && [self.delegate respondsToSelector:@selector(processAtAction:)]){
+            [self.delegate processAtAction:charBar];
+        }
+    }
+    
+}
+
 - (void)chatBar:(PhotonCharBar *)chatBar changeStatusFrom:(PhotonChatBarStatus)fromStatus to:(PhotonChatBarStatus)toStatus{
     if (curStatus == toStatus) {
         return;
@@ -262,8 +277,11 @@ PhotonAudioRecorderDelegate>
     if ([sendText length] == 0) {
         return;
     }
-    if ([self.delegate respondsToSelector:@selector(sendTextMessage:)]) {
-        [self.delegate sendTextMessage:text];
+    if ([self.delegate respondsToSelector:@selector(sendTextMessage:atItems:type:)]) {
+        NSArray *infos = [chatBar.atInfos copy];
+        [self.delegate sendTextMessage:text atItems:infos type:chatBar.atType];
+        chatBar.atInfos = [@[] copy];
+        chatBar.atType = AtTypeNoAt;
     }
 }
 

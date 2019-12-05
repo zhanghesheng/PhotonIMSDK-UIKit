@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "PhotonIMSDK/PhotonIMSDK.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol PotonTableViewDataSourceProtocol <UITableViewDataSource>
-@property(nonatomic, strong,nullable) NSMutableArray *items;
+@property(nonatomic, strong,nullable)PhotonIMThreadSafeArray *items;
 - (id)tableView:(UITableView *)tableView objectForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 - (Class)tableView:(UITableView *)tableView cellClassForObject:(id)object;

@@ -54,7 +54,8 @@
     return @"PhotonTitleTableViewCell";
 }
 + (CGFloat)tableView:(UITableView *)tableView rowHeightForObject:(id)object{
-    return 50;
+    PhotonTitleTableItem *item = (PhotonTitleTableItem *)object;
+    return item.itemHeight;
 }
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];

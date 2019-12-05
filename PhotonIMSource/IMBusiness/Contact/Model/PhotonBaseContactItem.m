@@ -1,14 +1,14 @@
 //
-//  PhotonContactItem.m
+//  PhotonBaseContactItem.m
 //  PhotonIM
 //
 //  Created by Bruce on 2019/6/27.
 //  Copyright © 2019 Bruce. All rights reserved.
 //
 
-#import "PhotonContactItem.h"
+#import "PhotonBaseContactItem.h"
 
-@implementation PhotonContactItem
+@implementation PhotonBaseContactItem
 - (CGFloat)itemHeight{
     return 70.0f;
 }

@@ -88,6 +88,12 @@ typedef NS_ENUM(NSInteger, PhotonChatBarStatus) {
     PhotonChatBarStatusKeyboard,
 };
 
+typedef NS_ENUM(NSInteger, AtType) {
+    AtTypeNoAt = 0,
+    AtTypeAtMember,
+    AtTypeAtAll
+};
+
 #define DEFAULT_TABLE_CELL_HRIGHT 64.0;
 
 #pragma mark - # ENCODED_AND_DECODED

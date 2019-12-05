@@ -53,15 +53,26 @@
             [self.contentBackgroundView sd_setImageWithURL:fileURL placeholderImage:nil];
         }
     }
-    [self p_layoutViews];
 }
 
 - (void)p_layoutViews{
     PhotonBaseChatItem *item = (PhotonBaseChatItem *)self.item;
-    CGSize size = item.contentSize;
-    [self.contentBackgroundView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(size);
-    }];
+    CGRect contentBackgroundViewFrame = self.contentBackgroundView.frame;
+    contentBackgroundViewFrame.size = CGSizeMake(item.contentSize.width + MSG_SPACE_RIGHT + MSG_SPACE_LEFT, item.contentSize.height + MSG_SPACE_TOP + MSG_SPACE_BTM);
+    CGFloat contentBackgroundViewLeft = 0;
+    if (item.fromType == PhotonChatMessageFromSelf) {
+        contentBackgroundViewLeft = contentBackgroundViewFrame.origin.x-contentBackgroundViewFrame.size.width;
+    }else{
+        contentBackgroundViewLeft = contentBackgroundViewFrame.origin.x;
+    }
+    contentBackgroundViewFrame.origin.x = contentBackgroundViewLeft;
+    self.contentBackgroundView.frame = contentBackgroundViewFrame;
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    [self p_layoutViews];
+    [self subview_layout];
 }
 
 - (void)prepareForReuse{

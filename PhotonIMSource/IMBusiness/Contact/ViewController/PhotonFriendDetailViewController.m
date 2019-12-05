@@ -139,9 +139,7 @@
 }
 
 - (void)sendMessage:(id)message{
-    PhotonIMConversation *conversation = [[PhotonIMConversation alloc] init];
-    conversation.chatWith = [_user userID];
-    conversation.chatType = PhotonIMChatTypeSingle;
+    PhotonIMConversation *conversation = [[PhotonIMConversation alloc] initWithChatType:PhotonIMChatTypeSingle chatWith:[_user userID]];
     conversation.FName = [_user nickName];
     conversation.FAvatarPath = [_user avatarURL];
     PhotonChatViewController *chatctl = [[PhotonChatViewController alloc] initWithConversation:conversation];

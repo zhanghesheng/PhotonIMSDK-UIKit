@@ -13,7 +13,6 @@ TODO: Add long description of the pod here.
   s.platform         = :ios, '10.0'
   s.ios.deployment_target = '10.0'
   s.static_framework = true
-  s.dependency 'protobuf-lib'
   s.dependency 'PhotonIMSDK'
   s.dependency 'MDLog'
   s.dependency 'Masonry'

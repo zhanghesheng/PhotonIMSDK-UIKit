@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable)NSString  *fileName;
 @property (nonatomic, strong, nullable)NSString *orignURL;
 @property (nonatomic, strong, nullable)NSString *thumURL;
-@property (nonatomic, assign)CGSize imageSize;
 @property (nonatomic, assign)CGFloat whRatio;
 @end
 

@@ -25,7 +25,6 @@
 #pragma mark UITableViewCell
 
 - (void)prepareForReuse {
-    self.object = nil;
     [super prepareForReuse];
 }
 

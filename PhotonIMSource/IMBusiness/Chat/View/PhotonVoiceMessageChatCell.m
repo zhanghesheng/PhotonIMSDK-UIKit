@@ -35,6 +35,17 @@
     PhotonVoiceMessageChatItem *item = (PhotonVoiceMessageChatItem *)object;
     CGFloat duration = item.duration;
     self.durationLabel.text = [NSString stringWithFormat:@"%ld \"",lround(duration)];
+}
+
+- (void)prepareForReuse{
+    [super prepareForReuse];
+    self.durationLabel.text = nil;
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    PhotonVoiceMessageChatItem *item = (PhotonVoiceMessageChatItem *)self.item;
+    CGFloat duration = item.duration;
     CGFloat bgViewWidth = 90 + (duration * (150.0f/60.0f));
     CGFloat maxWidth = PhotoScreenWidth - (AVATAR_WIDTH + AVATAR_SPACE_X + MSGBG_SPACE_X + 100);
     if (bgViewWidth > maxWidth) {
@@ -42,48 +53,60 @@
     }
     PhotonChatMessageFromType fromType = item.fromType;
     CGSize bgViewSize = CGSizeMake(bgViewWidth, 44);
-    [self.contentBackgroundView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(bgViewSize);
-    }];
+    CGRect contentBackgroundViewFrame = self.contentBackgroundView.frame;
+    contentBackgroundViewFrame.size = bgViewSize;
+    CGFloat contentBackgroundViewLeft = 0;
+    if (item.fromType == PhotonChatMessageFromSelf) {
+        contentBackgroundViewLeft = contentBackgroundViewFrame.origin.x-contentBackgroundViewFrame.size.width;
+    }else{
+        contentBackgroundViewLeft = contentBackgroundViewFrame.origin.x;
+    }
+    contentBackgroundViewFrame.origin.x = contentBackgroundViewLeft;
+    self.contentBackgroundView.frame = contentBackgroundViewFrame;
+    
+    
+    
     if (fromType == PhotonChatMessageFromSelf) {
-        [self.voiceView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(self.contentBackgroundView);
-            make.width.mas_equalTo(40);
-            make.right.mas_equalTo(self.contentBackgroundView).mas_offset(-10);
-            make.top.mas_equalTo(self.contentBackgroundView);
-        }];
+        CGFloat voiceViewHeight  = contentBackgroundViewFrame.size.height;
+        CGFloat voiceViewWidth = 40;
+        CGFloat voiceViewTop = 0;
+        CGFloat voiceViewLeft = contentBackgroundViewFrame.size.width - 10 - voiceViewWidth;
+        CGRect voiceViewFrame = CGRectMake(voiceViewLeft, voiceViewTop, voiceViewWidth, voiceViewHeight);
+        self.voiceView.frame = voiceViewFrame;
         
-        [self.durationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(self.contentBackgroundView);
-            make.left.mas_equalTo(self.contentBackgroundView).mas_equalTo(0);
-            make.right.mas_equalTo(self.voiceView.mas_left).mas_offset(-5);
-            make.top.mas_equalTo(self.contentBackgroundView);
-        }];
+        CGFloat durationLabelHeight  = contentBackgroundViewFrame.size.height;
+        CGFloat durationLabelWidth = contentBackgroundViewFrame.size.width - voiceViewWidth - 10 - 5;
+        CGFloat durationLabelTop = 0;
+        CGFloat durationLabelLeft = 0;
+        CGRect durationLabelFrame = CGRectMake(durationLabelLeft, durationLabelTop, durationLabelWidth, durationLabelHeight);
+        self.durationLabel.frame = durationLabelFrame;
     }else if(fromType == PhotonChatMessageFromFriend){
-        [self.voiceView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(self.contentBackgroundView);
-            make.width.mas_equalTo(40);
-            make.left.mas_equalTo(self.contentBackgroundView).mas_offset(10);
-            make.top.mas_equalTo(self.contentBackgroundView);
-        }];
+        CGFloat voiceViewHeight  = contentBackgroundViewFrame.size.height;
+        CGFloat voiceViewWidth = 40;
+        CGFloat voiceViewTop = 0;
+        CGFloat voiceViewLeft = 10;
+        CGRect voiceViewFrame = CGRectMake(voiceViewLeft, voiceViewTop, voiceViewWidth, voiceViewHeight);
+        self.voiceView.frame = voiceViewFrame;
+
         
-        [self.durationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(self.contentBackgroundView);
-            make.right.mas_equalTo(self.contentBackgroundView).mas_equalTo(0);
-            make.left.mas_equalTo(self.voiceView.mas_right).mas_offset(5);
-            make.top.mas_equalTo(self.contentBackgroundView);
-        }];
+        CGFloat durationLabelHeight  = contentBackgroundViewFrame.size.height;
+        CGFloat durationLabelWidth = contentBackgroundViewFrame.size.width - voiceViewWidth - 10 - 5;
+        CGFloat durationLabelTop = 0;
+        CGFloat durationLabelLeft = voiceViewLeft + voiceViewWidth + 5;
+        CGRect durationLabelFrame = CGRectMake(durationLabelLeft, durationLabelTop, durationLabelWidth, durationLabelHeight);
+        self.durationLabel.frame = durationLabelFrame;
         
         if (!item.isPlayed && !self.redDoteView.hidden) {
-            [self.redDoteView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.centerY.mas_equalTo(self.contentBackgroundView.mas_centerY);
-                make.left.mas_equalTo(self.contentBackgroundView.mas_right).mas_offset(5);
-                make.size.mas_equalTo(CGSizeMake(10, 10));
-            }];
+            CGFloat redDoteViewHeight  = 10;
+            CGFloat redDoteViewWidth = 10;
+            CGFloat redDoteViewTop = self.contentBackgroundView.center.y - redDoteViewHeight/2.0;
+            CGFloat redDoteViewLeft = contentBackgroundViewFrame.origin.x + contentBackgroundViewFrame.size.width  + 5;
+            CGRect redDoteViewFrame = CGRectMake(redDoteViewLeft, redDoteViewTop, redDoteViewWidth, redDoteViewHeight);
+            self.redDoteView.frame = redDoteViewFrame;
         }
     }
     
-   
+    [self subview_layout];
 }
 
 - (void)tapBackgroundView{

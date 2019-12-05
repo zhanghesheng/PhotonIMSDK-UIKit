@@ -13,7 +13,9 @@
 {
     self = [super init];
     if (self) {
-        _avatarURL = @"";
+        _avatalarImgaeURL = @"";
+        _tempItemHeight = 0;
+         _size = CGSizeZero;
     }
     return self;
 }
@@ -22,14 +24,17 @@
     NSTimeInterval tempTimeStamp = (_timeStamp/1000.0);
     NSDate *localeDate = [NSDate dateWithTimeIntervalSince1970:tempTimeStamp];
     _showTime = [PhotonUtil itemNeedShowTime:localeDate];
-    _timeText = [localeDate chatTimeInfo];
+    if (_timeText.length == 0) {
+        _timeText = [localeDate chatTimeInfo];
+    }
 }
 
 - (CGFloat)itemHeight{
     CGFloat timeHeight = self.showTime?TIMELABEL_HEIGHT + TIMELABEL_SPACE_Y + AVATAR_SPACE_Y:AVATAR_SPACE_Y;
     CGFloat contentHeight = self.contentSize.height + MSG_SPACE_TOP + MSG_SPACE_BTM;
     CGFloat tipContentHeight = [self.tipText isNotEmpty]?TIPLABEL_HEIGHT+TIPLABEL_SPACE_Y + TIPLABEL_SPACE_Y:TIMELABEL_SPACE_Y;
-    return timeHeight + contentHeight + tipContentHeight;
+    _tempItemHeight = timeHeight + contentHeight + tipContentHeight;
+    return _tempItemHeight;
 }
 
 - (BOOL)canWithDrawMsg{

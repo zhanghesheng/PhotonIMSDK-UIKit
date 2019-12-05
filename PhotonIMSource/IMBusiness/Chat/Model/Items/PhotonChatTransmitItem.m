@@ -9,5 +9,12 @@
 #import "PhotonChatTransmitItem.h"
 
 @implementation PhotonChatTransmitItem
-
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _showSelectBtn = YES;
+    }
+    return self;
+}
 @end

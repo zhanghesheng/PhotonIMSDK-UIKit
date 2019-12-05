@@ -38,6 +38,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"我";
+    self.tabBarItem.tag = 3;
     [self.view setBackgroundColor:[UIColor colorWithHex:0xF3F3F3]];
     self.tableView.backgroundColor = [UIColor colorWithHex:0xF3F3F3];
     self.tableView.scrollEnabled = NO;
@@ -62,6 +63,7 @@
     personItem2.value = [user.nickName isNotEmpty]?user.nickName:@"未设置";
     personItem2.type = PhotonPersonItemTypeNick;
     personItem2.valueColor = [UIColor colorWithHex:0x5D5C6F];
+    
     
     
     PhotonPersonItem *personItem4 = [[PhotonPersonItem alloc] init];

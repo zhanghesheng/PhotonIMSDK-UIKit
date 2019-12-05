@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PhotonCharBar.h"
+#import <PhotonIMSDK/PhotonIMSDK.h>
 #import <UIKit/UIKit.h>
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,11 +18,15 @@ NS_ASSUME_NONNULL_BEGIN
 // 聊天面板高度改变，控制相关视图的移动
 - (void)scrollToBottomWithAnimation:(BOOL)animation;
 // 发送文本，emoji信息
-- (void)sendTextMessage:(NSString *)text;
+- (void)sendTextMessage:(NSString *)text atItems:(NSArray<PhotonChatAtInfo *>*)atItems type:(AtType)atType;
 // 发送图片信息
 - (void)sendImageMessage:(NSData *)imageData;
 // 发送语音信息
 - (void)sendVoiceMessage:(NSString *)fileName duraion:(CGFloat)duraion;
+
+
+//初始输入at的处理
+- (void)processAtAction:(PhotonCharBar *)charBar;
 @end
 
 @interface PhotonChatPanelManager : NSObject

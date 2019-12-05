@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PhotonTextMessageChatItem : PhotonBaseChatItem
 @property(nonatomic, copy, nullable) NSString *messageText;
 @property(nonatomic, copy, nullable) NSAttributedString *messageAttriText;
+@property(nonatomic, copy, nullable) NSArray *atInfo;
+@property(nonatomic, assign) int  type;
 @end
 
 NS_ASSUME_NONNULL_END

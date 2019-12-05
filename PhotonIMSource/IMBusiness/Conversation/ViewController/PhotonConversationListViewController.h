@@ -12,7 +12,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PhotonConversationListViewController : PhotonBaseViewController
-@property (nonatomic, readonly, nullable)PhotonConversationModel *model;
 @end
 
 NS_ASSUME_NONNULL_END

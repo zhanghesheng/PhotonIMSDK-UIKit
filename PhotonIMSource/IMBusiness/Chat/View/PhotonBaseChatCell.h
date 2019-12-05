@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)longPressBGView:(UIGestureRecognizer *)gestureRecognizer;
 
 - (void)tapBackgroundView;
-
+- (void)subview_layout;
 @end
 
 NS_ASSUME_NONNULL_END

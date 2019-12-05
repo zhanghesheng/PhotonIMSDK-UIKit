@@ -6,32 +6,32 @@
 //  Copyright © 2019 Bruce. All rights reserved.
 //
 
-#import "PhotonMessageSettingViewController.h"
+#import "PhotonSingleSettingViewController.h"
 #import "PhotonMessageSettingItem.h"
 #import "PhotonMessageSettingCell.h"
 #import "PhotonNetworkService.h"
-#import "PhotonContactItem.h"
-#import "PhotonContactCell.h"
+#import "PhotonBaseContactItem.h"
+#import "PhotonBaseContactCell.h"
 #import "PhotonEmptyTableItem.h"
-@interface PhotonMessageSettingDataSource ()
+@interface PhotonSingleSettingDataSource ()
 @end
 
-@implementation PhotonMessageSettingDataSource
+@implementation PhotonSingleSettingDataSource
 - (Class)tableView:(UITableView *)tableView cellClassForObject:(id)object{
     if ([object isKindOfClass:[PhotonMessageSettingItem class]]) {
         return [PhotonMessageSettingCell class];
-    }else if ([object isKindOfClass:[PhotonContactItem class]]){
-        return [PhotonContactCell class];
+    }else if ([object isKindOfClass:[PhotonBaseContactItem class]]){
+        return [PhotonBaseContactCell class];
     }
     return [super tableView:tableView cellClassForObject:object];
 }
 @end
-@interface PhotonMessageSettingViewController ()<UITableViewDelegate,PhotonMessageSettingCellDelegate>
+@interface PhotonSingleSettingViewController ()<UITableViewDelegate,PhotonMessageSettingCellDelegate>
 @property (nonatomic, weak, nullable)PhotonIMConversation *conversation;
 @property (nonatomic, strong, nullable)PhotonNetworkService *netService;
 @end
 
-@implementation PhotonMessageSettingViewController
+@implementation PhotonSingleSettingViewController
 
 - (instancetype)initWithConversation:(PhotonIMConversation *)conversation{
     self = [super init];
@@ -61,9 +61,9 @@
     emptyItem.backgroudColor = [UIColor clearColor];
     [self.items addObject:emptyItem];
     
-    PhotonContactItem *contactItem = [[PhotonContactItem alloc] init];
-    contactItem.fNickName = self.conversation.FName?self.conversation.FName:self.conversation.chatWith;
-    contactItem.fIcon = self.conversation.FAvatarPath;
+    PhotonBaseContactItem *contactItem = [[PhotonBaseContactItem alloc] init];
+    contactItem.contactName = self.conversation.FName?self.conversation.FName:self.conversation.chatWith;
+    contactItem.contactAvatar = self.conversation.FAvatarPath;
     contactItem.itemHeight = 63;
     contactItem.userInfo = [PhotonContent friendDetailInfo:self.conversation.chatWith];
     [self.items addObject:contactItem];
@@ -76,7 +76,13 @@
     settionItem.type = PhotonMessageSettingTypeIgnoreAlert;
     [self.items addObject:settionItem];
     
-    PhotonMessageSettingDataSource *dataSource = [[PhotonMessageSettingDataSource alloc] initWithItems:self.items];
+    PhotonMessageSettingItem *stickyItem = [[PhotonMessageSettingItem alloc] init];
+    stickyItem.settingName = @"置顶";
+    stickyItem.open = _conversation.sticky;
+    stickyItem.type = PhotonMessageSettingTypeIgnorSticky;
+    [self.items addObject:stickyItem];
+    
+    PhotonSingleSettingDataSource *dataSource = [[PhotonSingleSettingDataSource alloc] initWithItems:self.items];
     self.dataSource = dataSource;
 }
 
@@ -98,6 +104,7 @@
             break;
         case PhotonMessageSettingTypeIgnorSticky:{
             _conversation.sticky = item.open;
+            [[PhotonIMClient sharedClient] updateConversationSticky:_conversation];
         }
             break;
             
@@ -109,7 +116,7 @@
 - (void)setIgnoreAlert:(BOOL)open{
     NSMutableDictionary *paramter = [NSMutableDictionary dictionary];
     [paramter setValue:self.conversation.chatWith forKey:@"remoteid"];
-    [paramter setValue:@(open) forKey:@"switch"];
+    [paramter setValue:@(!open) forKey:@"switch"];
     [self.netService commonRequestMethod:PhotonRequestMethodPost queryString:@"photonimdemo/setting/msg/setP2pRemind" paramter:paramter completion:^(NSDictionary * _Nonnull dict) {
     } failure:^(PhotonErrorDescription * _Nonnull error) {
         [PhotonUtil showErrorHint:@"勿扰模式保存失败!"];

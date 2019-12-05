@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,6 @@
 		323D1D3A230AA0BC007A937E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D39230AA0BC007A937E /* AppDelegate.m */; };
 		323D1D3D230AA0BC007A937E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D3C230AA0BC007A937E /* ViewController.m */; };
 		323D1D40230AA0BC007A937E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 323D1D3E230AA0BC007A937E /* Main.storyboard */; };
-		323D1D42230AA0BD007A937E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 323D1D41230AA0BD007A937E /* Assets.xcassets */; };
 		323D1D45230AA0BD007A937E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 323D1D43230AA0BD007A937E /* LaunchScreen.storyboard */; };
 		323D1D48230AA0BD007A937E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D47230AA0BD007A937E /* main.m */; };
 		323D1D52230AA0BD007A937E /* PhotonIMSDKUIKitDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 323D1D51230AA0BD007A937E /* PhotonIMSDKUIKitDemoUITests.m */; };
@@ -216,7 +215,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				323D1D45230AA0BD007A937E /* LaunchScreen.storyboard in Resources */,
-				323D1D42230AA0BD007A937E /* Assets.xcassets in Resources */,
 				323D1D40230AA0BC007A937E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,9 +9,9 @@
 #import "PhotonBaseViewController.h"
 #import "PhotonMessageCenter.h"
 NS_ASSUME_NONNULL_BEGIN
-@interface PhotonMessageSettingDataSource : PotonTableViewDataSource
+@interface PhotonSingleSettingDataSource : PotonTableViewDataSource
 @end
-@interface PhotonMessageSettingViewController : PhotonBaseViewController
+@interface PhotonSingleSettingViewController : PhotonBaseViewController
 - (instancetype)initWithConversation:(PhotonIMConversation *)conversation;
 @end
 

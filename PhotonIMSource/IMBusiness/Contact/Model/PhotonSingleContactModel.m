@@ -6,10 +6,10 @@
 //  Copyright © 2019 Bruce. All rights reserved.
 //
 
-#import "PhotonContactModel.h"
-@interface PhotonContactModel()
+#import "PhotonSingleContactModel.h"
+@interface PhotonSingleContactModel()
 @end
-@implementation PhotonContactModel
+@implementation PhotonSingleContactModel
 - (instancetype)init
 {
     self = [super init];
@@ -43,15 +43,16 @@
     if (data.count > 0) {
         NSArray *lists = [data objectForKey:@"lists"];
         if (lists.count > 0) {
-            self.items = [NSMutableArray arrayWithCapacity:lists.count];
+            self.items = [PhotonIMThreadSafeArray arrayWithCapacity:lists.count];
             for (NSDictionary *item in lists) {
                 PhotonUser *user = [[PhotonUser alloc] init];
                 user.userID = [[item objectForKey:@"userId"] isNil];
                 user.nickName = [[item objectForKey:@"nickname"] isNil];
                 user.avatarURL = [[item objectForKey:@"avatar"] isNil];
-                PhotonContactItem *conItem = [[PhotonContactItem alloc] init];
-                conItem.fIcon = user.avatarURL;
-                conItem.fNickName = user.nickName? user.nickName: user.userID;
+                user.type = [[item objectForKey:@"type"] isNil]?1:[[[item objectForKey:@"type"] isNil] intValue];
+                PhotonBaseContactItem *conItem = [[PhotonBaseContactItem alloc] init];
+                conItem.contactAvatar = user.avatarURL;
+                conItem.contactName = user.nickName? user.nickName: user.userID;
                 conItem.userInfo = user;
                 [self.items addObject:conItem];
             }

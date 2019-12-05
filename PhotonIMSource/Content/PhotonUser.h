@@ -41,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, nullable)NSString *remark;
 
+/**
+ (1 单人, 2 群)
+ */
+@property (nonatomic, assign) int type;
 
 - (instancetype)initWithUserId:(NSString *)userid userName:(NSString *)userName avartarURL:(nullable NSString *)avartarURL;
 

@@ -59,7 +59,13 @@ static BOOL photon_disableFixSpace = NO;
         CGFloat space = photon_defaultFixSpace;
         for (UIView *subview in self.subviews) {
             if ([NSStringFromClass(subview.class) containsString:@"ContentView"]) {
-                subview.layoutMargins = UIEdgeInsetsMake(0, space, 0, space);//可修正iOS11之后的偏移
+                if (@available(iOS 13.0, *)) {
+                    UIEdgeInsets margins=subview.layoutMargins;
+                    subview.frame = CGRectMake(-margins.left + space, margins.top, margins.left + margins.right- space*2 + subview.frame.size.width, margins.top + margins.bottom + subview.frame.size.height);
+                } else {
+                   subview.layoutMargins = UIEdgeInsetsMake(0, space, 0, space);//可修正iOS11之后的偏移
+                }
+                
                 break;
             }
         }

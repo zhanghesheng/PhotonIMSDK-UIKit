@@ -6,7 +6,7 @@
 //  Copyright © 2019 Bruce. All rights reserved.
 //
 
-#import "PhotonContactCell.h"
+#import "PhotonBaseContactCell.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @protocol PhotonChatTransmitCellDelegate <NSObject>
@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cell:(id)cell selectedItem:(id)item;
 
 @end
-@interface PhotonChatTransmitCell : PhotonContactCell
+@interface PhotonChatTransmitCell : PhotonBaseContactCell
 @property (nonatomic, weak, nullable)id<PhotonChatTransmitCellDelegate>delegate;
 @end
 

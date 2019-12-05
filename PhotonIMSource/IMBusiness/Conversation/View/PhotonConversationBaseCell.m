@@ -10,6 +10,7 @@
 #import "PhotonMessageCenter.h"
 #import "PhotonConversationItem.h"
 #import "PhoneBadgeView.h"
+#import "NSString+PhotonExtensions.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 @interface PhotonConversationBaseCell()
 @property (nonatomic, strong, nullable) UIImageView *iconView;
@@ -59,8 +60,33 @@
     }else{
         nickName = conversation.chatWith;
     }
-    self.nickLabel.text = nickName;
-     self.contextLabel.text = conversation.lastMsgContent;
+     self.nickLabel.text = nickName;
+    
+    
+    NSMutableAttributedString *content = [[NSMutableAttributedString alloc] init];
+    NSMutableAttributedString *atTypeString = [[NSMutableAttributedString alloc] init];
+    if (conversation.atType == PhotonIMConversationAtTypeAtMe) {
+        atTypeString = [[NSMutableAttributedString alloc] initWithString:@"有人@了我" attributes:@{NSForegroundColorAttributeName:(id)[UIColor redColor]}];
+    }else if (conversation.atType == PhotonIMConversationTypeAtAll){
+         atTypeString = [[NSMutableAttributedString alloc] initWithString:@"@所有人" attributes:@{NSForegroundColorAttributeName:(id)[UIColor redColor]}];
+    }
+    if (atTypeString) {
+        [content appendAttributedString:atTypeString];
+    }
+    NSMutableAttributedString *chatContent;
+    if(conversation.chatType == PhotonIMChatTypeGroup && conversation.lastMsgContent && conversation.lastMsgContent.length > 0){
+         PhotonUser *user =  [PhotonContent friendDetailInfo:conversation.lastMsgFr];
+         chatContent = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@:%@",user.nickName,[conversation.lastMsgContent trim]] attributes:@{NSForegroundColorAttributeName:[UIColor colorWithHex:0x9B9B9B]}];
+    }else{
+        if(conversation.lastMsgContent){
+             chatContent = [[NSMutableAttributedString alloc] initWithString:[conversation.lastMsgContent trim] attributes:@{NSForegroundColorAttributeName:[UIColor colorWithHex:0x9B9B9B]}];
+        }
+       
+    }
+    if (chatContent) {
+        [content appendAttributedString:chatContent];
+    }
+    self.contextLabel.attributedText = content;
     if([conversation.lastMsgContent isNotEmpty]){
         NSTimeInterval tempTimeStamp = (conversation.lastTimeStamp/1000.0);
         NSDate *localeDate = [NSDate dateWithTimeIntervalSince1970:tempTimeStamp];
@@ -79,7 +105,7 @@
         [self.badgeView setBadgeValue:valueStr];
         }
     }
-    BOOL isSending = [conversation.lastMsgContent isNotEmpty] && (conversation.lastMsgStatus == PhotonIMMessageStatusSending || conversation.lastMsgStatus == PhotonIMMessageStatusDefault);
+    BOOL isSending = [conversation.lastMsgContent isNotEmpty] && (conversation.lastMsgStatus == PhotonIMMessageStatusSending);
     BOOL isSentFailed = [conversation.lastMsgContent isNotEmpty] && (conversation.lastMsgStatus == PhotonIMMessageStatusFailed);
     if (!conversation.lastMsgIsReceived) {
         isSending = NO;
@@ -97,104 +123,96 @@
     }else{
         [self.indicatorView stopAnimating];
     }
-    [self p_layoutViews];
+    
 }
 
 - (void)layoutSubviews{
     [super layoutSubviews];
+    [self p_layoutViews];
 }
 
 - (void)p_layoutViews{
     PhotonConversationItem *item = (PhotonConversationItem *)self.item;
     PhotonIMConversation *conversation = (PhotonIMConversation *)item.userInfo;
-    // 头像
-    [self.iconView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(56, 56));
-        make.centerY.mas_equalTo(self.contentView.mas_centerY);
-        make.left.mas_equalTo(17.5);
-    }];
+    
+    CGRect contentFrame = self.contentView.frame;
+    CGRect iconFrame = self.iconView.frame;
+    iconFrame.size = CGSizeMake(56.0, 56.0);
+    CGFloat iconY = (contentFrame.size.height - 56.0)/2.0;
+    iconFrame.origin = CGPointMake(17.5, iconY);
+    self.iconView.frame = iconFrame;
+    
     // 时间
-   
-    [self.timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(16.5);
-        make.right.mas_equalTo(self.contentView).mas_equalTo(-15);
-    }];
+    CGSize size = [self.timeLabel sizeThatFits:CGSizeMake(PhotoScreenWidth, MAXFLOAT)];
+    CGRect timeFrame = self.timeLabel.frame;
+    timeFrame.size = CGSizeMake(size.width + 5.0,size.height);
+    CGFloat timeX = contentFrame.size.width - (size.width + 5.0 + 15.0);
+    timeFrame.origin = CGPointMake(timeX, 16.5);
+    self.timeLabel.frame = timeFrame;
     
-     CGSize size = [self.timeLabel sizeThatFits:CGSizeMake(PhotoScreenWidth, MAXFLOAT)];
-    [self.timeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(size.height);
-        make.width.mas_equalTo(size.width + 5);
-    }];
-    
-    // 昵称
+//    // 昵称
     size = [self.nickLabel sizeThatFits:CGSizeMake(PhotoScreenWidth, MAXFLOAT)];
-    [self.nickLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(21);
-        make.left.mas_equalTo(self.iconView.mas_right).mas_offset(15.5);
-    }];
+    CGRect nickFrame = self.nickLabel.frame;
+    nickFrame.size = size;
+    CGFloat nickX = iconFrame.size.width + iconFrame.origin.x + 15.5;
+    nickFrame.origin = CGPointMake(nickX, 21.0);
+    self.nickLabel.frame = nickFrame;
     
-    [self.nickLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(size);
-    }];
-    
-    // 秒打扰图标
-    [self.noalermView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.nickLabel.mas_centerY);
-        make.left.mas_equalTo(self.nickLabel.mas_right).mas_offset(5);
-    }];
+    // 免打扰图标
+    CGRect noalermFrame = self.noalermView.frame;
     if(conversation.ignoreAlert){
-        [self.noalermView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.size.mas_equalTo(CGSizeMake(16, 11));
-        }];
+         noalermFrame.size = CGSizeMake(16, 11);
+         CGFloat noalermX = nickFrame.size.width + nickFrame.origin.x + 1.0;
+         CGFloat noalermY = nickFrame.origin.y + (nickFrame.size.height - size.height)/2.0;
+         noalermFrame.origin = CGPointMake(noalermX, noalermY);
+         self.noalermView.frame = noalermFrame;
     }else{
-        [self.noalermView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.size.mas_equalTo(CGSizeZero);
-        }];
+         self.noalermView.frame = CGRectZero;
     }
    
+    // 未读数
     if(conversation.unReadCount > 0){
-        size = [PhoneBadgeView badgeSizeWithValue:[@(conversation.unReadCount) stringValue]];
+       size = [PhoneBadgeView badgeSizeWithValue:[@(conversation.unReadCount) stringValue]];
+      
     }else{
-        size =CGSizeZero;
+       size = CGSizeZero;
     }
-    [self.badgeView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self.timeLabel.mas_bottom).mas_offset(5);
-        make.right.mas_equalTo(self.contentView.mas_right).mas_offset(-21.8);
-    }];
-    
-    [self.badgeView mas_updateConstraints:^(MASConstraintMaker *make) {
-         make.size.mas_equalTo(size);
-    }];
+    CGRect badgeFrame = self.badgeView.frame;
+    badgeFrame.size = size;
+    CGFloat badgeY = timeFrame.size.height + timeFrame.origin.y + 5.0;
+    CGFloat badgex =  contentFrame.size.width - (size.width + 21.8);
+    badgeFrame.origin = CGPointMake(badgex, badgeY);
+    self.badgeView.frame = badgeFrame;
     
     
-    [self.sendStatusView mas_makeConstraints:^(MASConstraintMaker *make) {
-       make.top.mas_equalTo(self.nickLabel.mas_bottom).mas_offset(1.5);
-       make.left.mas_equalTo(self.nickLabel.mas_left);
-    }];
-   
-    [self.contextLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(18.5);
-        make.top.mas_equalTo(self.nickLabel.mas_bottom).mas_offset(1.5);
-        make.left.mas_equalTo(self.sendStatusView.mas_right).mas_offset(0);
-        make.right.mas_equalTo(self.badgeView.mas_left).mas_equalTo(-5);
-    }];
+    // 状态
     if (!self.sendStatusView.image && !self.indicatorView.animating) {
-        [self.sendStatusView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(0);
-            make.width.mas_equalTo(0);
-        }];
+        size = CGSizeZero;
     }else{
-        [self.sendStatusView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(18.5);
-            make.width.mas_equalTo(18.5);
-        }];
+        size = CGSizeMake(18.5, 18.5);
     }
-    [self.indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(12);
-        make.width.mas_equalTo(12);
-        make.left.mas_equalTo(self.sendStatusView).mas_offset(0);
-        make.centerY.mas_equalTo(self.sendStatusView);
-    }];
+    
+    CGRect sendStatusFrame = self.sendStatusView.frame;
+    CGFloat sendStatusY = nickFrame.size.height + nickFrame.origin.y + 2.5;
+    CGFloat sendStatusX = nickFrame.origin.x;
+    sendStatusFrame.size = size;
+    sendStatusFrame.origin = CGPointMake(sendStatusX, sendStatusY);
+    self.sendStatusView.frame = sendStatusFrame;
+    
+    CGRect indicatorFrame = self.indicatorView.frame;
+    indicatorFrame.size = CGSizeMake(12, 12);
+    indicatorFrame.origin = CGPointMake(3.0, 3.0);
+    self.indicatorView.frame = indicatorFrame;
+    
+    
+    CGRect contextFrame = self.sendStatusView.frame;
+    CGFloat contextY = nickFrame.size.height + nickFrame.origin.y + 1.5;
+    CGFloat contextX = sendStatusFrame.size.width + sendStatusFrame.origin.x;
+    CGFloat contextHeight = 18.5;
+    CGFloat contextWidth = contentFrame.size.width - (contextX + badgeFrame.size.width + 21.8);
+    contextFrame.size = CGSizeMake(contextWidth, contextHeight);
+    contextFrame.origin = CGPointMake(contextX, contextY);
+    self.contextLabel.frame = contextFrame;
     
 }
 

@@ -10,6 +10,8 @@
 #import "PontonTalkButton.h"
 #import <Masonry/Masonry.h>
 #import "PhotonMacros.h"
+@implementation PhotonChatAtInfo
+@end
 @interface PhotonCharBar()<UITextViewDelegate>{
     UIImage *kVoiceImage;
     UIImage *kVoiceImageHL;
@@ -27,7 +29,8 @@
 @property (nonatomic, strong, nullable) PontonTalkButton *talkButton;
 @property (nonatomic, strong, nullable) UIButton *emojiButton;
 @property (nonatomic, strong, nullable) UIButton *moreButton;
-
+@property(nonatomic, copy, nullable) NSString *currentInputText;
+@property(nonatomic, copy, nullable) NSString *currentText;
 @end
 
 @implementation PhotonCharBar
@@ -63,6 +66,7 @@
 #pragma mark - Public Methods
 - (void)sendCurrentText
 {
+    [self processSendAtInfo];
     if (self.textView.text.length > 0) {     // send Text
         if (_delegate && [_delegate respondsToSelector:@selector(chatBar:sendText:)]) {
             [_delegate chatBar:self sendText:self.textView.text];
@@ -71,6 +75,29 @@
     [self.textView setText:@""];
     [self hiddentTextViewLabel];
     [self p_reloadTextViewWithAnimation:YES];
+}
+
+- (void)processSendAtInfo{
+    if (self.atType == AtTypeNoAt) {
+        return;
+    }
+    NSMutableArray *atItems = [NSMutableArray array];
+    for (PhotonChatAtInfo *atItem in self.atInfos) {
+        if ([self.textView.text containsString:atItem.nickName]) {
+            [atItems addObject:atItem];
+            
+        }
+    }
+    if (atItems.count == 0) {
+        self.atType = AtTypeNoAt;
+    }
+    self.atInfos = [atItems copy];
+    for (PhotonChatAtInfo *atItem in self.atInfos) {
+        self.atType = atItem.atType;
+        if(atItem.atType == AtTypeAtAll){
+            break;
+        }
+    }
 }
 
 - (void)addEmojiString:(NSString *)emojiString
@@ -84,6 +111,17 @@
     [self hiddentTextViewLabel];
     [self p_reloadTextViewWithAnimation:YES];
     
+}
+
+- (void)addAtContent:(NSString *)content{
+    NSString *str = [NSString stringWithFormat:@"%@%@", self.textView.text, content];
+    NSInteger length = [self getTextLength:self.textView.text];
+    if (length > _maxTextWordCount) {
+        return;
+    }
+    [self.textView setText:str];
+    [self hiddentTextViewLabel];
+    [self p_reloadTextViewWithAnimation:YES];
 }
 
 - (void)deleteLastCharacter
@@ -147,6 +185,7 @@
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    _currentInputText = text;
     if ([text isEqualToString:@"\n"]) {
         [self sendCurrentText];
         return NO;
@@ -168,9 +207,42 @@
                 }
             }
         }
+        
+        [self characterDidRemovedWith:textView shouldChangeTextInRange:range replacementText:text];
     }
      return YES;
     
+}
+
+- (void)characterDidRemovedWith:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    NSInteger endLocation = range.location;
+    if(endLocation > 0 && endLocation <= [textView.text length]){
+        NSRange atRange = [textView.text rangeOfString:@"@" options:NSBackwardsSearch range:NSMakeRange(0, endLocation)];
+        if (atRange.location != NSNotFound && (endLocation > atRange.location) && endLocation <= [textView.text length]) {
+            NSRange atItemRange = NSMakeRange(atRange.location, (endLocation - atRange.location));
+            NSString *removedAtText = [textView.text substringWithRange:atItemRange];
+            NSMutableArray *atItems = [self.atInfos mutableCopy];
+            PhotonChatAtInfo *atItem = nil;
+            for (PhotonChatAtInfo *item in atItems) {
+                if ([[item.nickName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] isEqualToString:removedAtText]) {
+                    atItem = item;
+                    break;
+                }
+            }
+            if (atItem) {
+                NSMutableString *mutableText = [[NSMutableString alloc] initWithString:textView.text];
+                [mutableText replaceCharactersInRange:atItemRange withString:@""];
+                textView.text = mutableText;
+                [atItems removeObject:atItem];
+            }
+            
+            if (self.atInfos.count != atItems.count && self.atType == AtTypeAtAll) {
+                self.atType = AtTypeAtMember;
+            }
+            self.atInfos = [atItems copy];
+        }
+    }
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView
@@ -180,6 +252,7 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+    _currentText = textView.text;
     NSInteger length = [self getTextLength:textView.text];
     if (length > _maxTextWordCount)
     {
@@ -188,6 +261,10 @@
     }
     [self p_reloadTextViewWithAnimation:YES];
     [self hiddentTextViewLabel];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(chatBarTextViewDidChange:)]) {
+        [self.delegate chatBarTextViewDidChange:self];
+    }
 }
 
 - (NSInteger )subString:(NSString *)text subCount:(NSInteger)count{

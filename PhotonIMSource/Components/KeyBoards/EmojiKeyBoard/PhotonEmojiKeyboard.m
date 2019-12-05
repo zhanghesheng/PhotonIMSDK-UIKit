@@ -75,7 +75,7 @@ static PhotonEmojiKeyboard *_keyBoard;
     }];
     [self.pageControl mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.and.right.mas_equalTo(self);
-        make.top.mas_equalTo(self.collectionView.mas_bottom).mas_equalTo(0);
+        make.top.mas_equalTo(self.collectionView.mas_bottom).mas_equalTo(SAFEAREA_INSETS_BOTTOM);
         make.height.mas_equalTo(35);
     }];
     

@@ -6,20 +6,22 @@
 //  Copyright © 2019 Bruce. All rights reserved.
 //
 
-#import "PhotonContactCell.h"
-#import "PhotonContactItem.h"
+#import "PhotonBaseContactCell.h"
+#import "PhotonBaseContactItem.h"
 #import <SDWebImage/UIImageView+WebCache.h>
-@interface PhotonContactCell()
+@interface PhotonBaseContactCell()
 @property(nonatomic, copy, nullable)UIImageView *avatarView;
 @property(nonatomic, copy, nullable)UILabel *nickLabel;
+@property(nonatomic, copy, nullable)UIImageView *icon;
 @end
-@implementation PhotonContactCell
+@implementation PhotonBaseContactCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.contentView addSubview:self.avatarView];
         [self.contentView addSubview:self.nickLabel];
+        [self.contentView addSubview:self.icon];
     }
     return self;
 }
@@ -28,13 +30,22 @@
     if (!self.item) {
         return;
     }
-    PhotonContactItem *item = (PhotonContactItem *)object;
+    PhotonBaseContactItem *item = (PhotonBaseContactItem *)object;
     NSURL *avatarURL = nil;
-    if ([item.fIcon isNotEmpty]) {
-        avatarURL = [NSURL URLWithString:item.fIcon];
+    if ([item.contactAvatar isNotEmpty]) {
+        avatarURL = [NSURL URLWithString:item.contactAvatar];
     }
-    [self.avatarView sd_setImageWithURL:avatarURL];
-    self.nickLabel.text = item.fNickName;
+    [self.avatarView sd_setImageWithURL:avatarURL placeholderImage:[UIImage imageNamed:item.contactAvatar]];
+    self.nickLabel.text = item.contactName;
+    if ([item.contactIcon isNotEmpty]) {
+        [self.contentView addSubview:self.icon];
+        [self.icon setImage:[UIImage imageNamed:item.contactIcon]];
+        [self.icon mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(self.contentView).mas_offset(-18);
+            make.centerY.mas_equalTo(self.contentView);
+            make.width.mas_equalTo(22);
+        }];
+    }
     [self p_layoutViews];
 }
 
@@ -70,12 +81,21 @@
         _nickLabel.numberOfLines = 0;
     }
     return _nickLabel;
-    
+}
+
+- (UIImageView *)icon{
+    if (!_icon) {
+        _icon = [[UIImageView alloc] init];
+        _icon.contentMode = UIViewContentModeScaleAspectFit;
+        _icon.backgroundColor = [UIColor clearColor];
+        _icon.userInteractionEnabled = NO;
+    }
+    return _icon;
 }
 
 
 + (CGFloat)tableView:(UITableView *)tableView rowHeightForObject:(id)object{
-    PhotonContactItem *item = (PhotonContactItem *)object;
+    PhotonBaseContactItem *item = (PhotonBaseContactItem *)object;
     return item.itemHeight;
 }
 

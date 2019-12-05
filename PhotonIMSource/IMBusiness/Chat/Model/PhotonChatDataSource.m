@@ -57,7 +57,7 @@
         if (item.fromType == PhotonChatMessageFromSelf || !message) {
             return;
         }
-        if (item.fromType != PhotonChatMessageFromSelf && message.messageStatus != PhotonIMMessageStatusRecvRead) {
+        if (item.fromType != PhotonChatMessageFromSelf && message.messageStatus != PhotonIMMessageStatusRecvRead && message.chatType == PhotonIMChatTypeSingle) {
             NSString *msgID = [message messageID];
             // 状态设置为已读
             message.messageStatus = PhotonIMMessageStatusRecvRead;

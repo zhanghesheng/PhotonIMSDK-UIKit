@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PhotonNetworkService.h"
-
+#import <PhotonIMSDK/PhotonIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,9 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PhotonBaseModel : NSObject
 @property(nonatomic, strong, readonly, nullable)PhotonNetworkService  *netService;
-@property(nonatomic, strong,nullable) NSMutableArray *items;
+@property(nonatomic, strong,nullable) PhotonIMThreadSafeArray *items;
 @property(nonatomic, weak) id <PhotonBaseModelDelegate> delegate;
-
 
 // 分页的加载的使用
 @property(nonatomic, assign) NSInteger pageSize;
@@ -34,6 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
           failure:(void (^)(PhotonErrorDescription * _Nullable))failure;
 
 - (void)wrappResponseddDict:(NSDictionary *)dict;
+
+- (NSArray *)insertItem:(id)item;
+
+
+
 @end
 
 NS_ASSUME_NONNULL_END

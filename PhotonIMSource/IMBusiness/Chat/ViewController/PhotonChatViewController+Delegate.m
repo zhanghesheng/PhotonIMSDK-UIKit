@@ -76,7 +76,7 @@
             defaultImage = [(PhotonImageMessageChatItem *)chatItem orignURL];
         }
         NSMutableArray<NSString *> *imageItems = [[NSMutableArray alloc] init];
-        for (PhotonBaseChatItem *item in self.model.items) {
+        for (PhotonBaseChatItem *item in self.dataSource.items) {
             if ([item isKindOfClass:[PhotonImageMessageChatItem class]]) {
                 PhotonImageMessageChatItem *imgItem = (PhotonImageMessageChatItem *)item;
                 if ([imgItem localPath]) {
@@ -133,7 +133,7 @@
 
 // 长按内容背景
 - (void)chatCell:(PhotonBaseChatCell *)cell chatMessageCellLongPress:(PhotonBaseChatItem *)chatItem rect:(CGRect)rect{
-    NSInteger row = [self.model.items indexOfObject:chatItem];
+    NSInteger row = [self.dataSource.items indexOfObject:chatItem];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     CGRect cellRect = [self.tableView rectForRowAtIndexPath:indexPath];
     rect.origin.y += cellRect.origin.y - self.tableView.contentOffset.y;
@@ -170,7 +170,11 @@
     if (chatItem.fromType == PhotonChatMessageFromSelf) {
         user = [PhotonContent userDetailInfo];
     }else{
-        user = [PhotonContent friendDetailInfo:message.chatWith];
+        if(message.chatType == PhotonIMChatTypeSingle){
+            user = [PhotonContent friendDetailInfo:message.chatWith];
+        }else if (message.chatType == PhotonIMChatTypeGroup){
+             user = [PhotonContent friendDetailInfo:message.fr];
+        }
     }
     PhotonFriendDetailViewController * detailCTL = [[PhotonFriendDetailViewController alloc] initWithFriend:user];
     [self.navigationController pushViewController:detailCTL animated:YES];
@@ -242,7 +246,8 @@
 }
 
 - (void)addItems:(id)message{
-    id item =  [self.model wrapperMessage:message];
+    
+    id item =  [(PhotonChatModel *)self.model wrapperMessage:message];
     [self.model.items addObject:item];
     [self reloadData];
 }
@@ -251,11 +256,8 @@
     if (item == nil) {
         return;
     }
-        NSInteger index = [self.model.items indexOfObject:item];
-    // 先删除库中的信息，成功后移除页面细信息
     [self.model.items removeObject:item];
-    self.dataSource.items = self.model.items;
-    [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation: UITableViewRowAnimationAutomatic];
+    [self removeItem:item];
     [[PhotonMessageCenter sharedCenter] deleteMessage:item.userInfo];
 }
 #pragma mark ---- 撤回消息操作 ----------
@@ -279,7 +281,7 @@
     PhotonChatNoticItem *noticItem = [[PhotonChatNoticItem alloc] init];
     noticItem.notic = em;
     noticItem.userInfo = [item userInfo];
-    NSInteger index = [self.model.items indexOfObject:item];
+    NSInteger index = [self.dataSource.items indexOfObject:item];
     [self.model.items replaceObjectAtIndex:index withObject:noticItem];
     [self reloadData];
 }

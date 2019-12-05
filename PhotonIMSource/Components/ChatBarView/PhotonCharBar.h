@@ -10,6 +10,11 @@
 #import "PhotonMacros.h"
 #import <UIKit/UIKit.h>
 NS_ASSUME_NONNULL_BEGIN
+@interface PhotonChatAtInfo : NSObject
+@property (nonatomic,assign)AtType atType;
+@property (nonatomic,copy)NSString *userid;
+@property (nonatomic,copy)NSString *nickName;
+@end
 
 @class PhotonCharBar;
 @protocol PhotonCharBarDelegate <NSObject>
@@ -49,17 +54,25 @@ NS_ASSUME_NONNULL_BEGIN
  * 完成录音
  */
 - (void)chatBarFinishedRecoding:(PhotonCharBar *)chatBar;
+
+
+- (void)chatBarTextViewDidChange:(PhotonCharBar *)charBar;
 @end
 
 @interface PhotonCharBar : UIView
 @property(nonatomic, weak)id<PhotonCharBarDelegate> delegate;
 @property(nonatomic,assign)PhotonChatBarStatus status;
-@property(nonatomic, copy, readonly) NSString *currentText;
+@property(nonatomic, copy, readonly,nullable) NSString *currentInputText;
+@property(nonatomic, copy, readonly,nullable) NSString *currentText;
 @property(nonatomic,assign)NSInteger maxTextWordCount;
-
+@property (nonatomic, strong, readonly,nullable) UITextView *textView;
 @property (nonatomic, assign) BOOL activity;
+@property (nonatomic, copy) NSArray<PhotonChatAtInfo *>*atInfos;
+@property (nonatomic, assign)AtType atType;
 
 - (void)addEmojiString:(nullable NSString *)emojiString;
+
+- (void)addAtContent:(NSString *)content;
 
 - (void)sendCurrentText;
 

@@ -353,7 +353,7 @@ static PhotonMessageCenter *center = nil;
     }
 }
 
-- (void)transmitMessage:(nullable PhotonIMMessage *)message conversation:(nullable PhotonIMConversation *)conversation completion:(nullable CompletionBlock)completion{
+- (PhotonIMMessage *)transmitMessage:(nullable PhotonIMMessage *)message conversation:(nullable PhotonIMConversation *)conversation completion:(nullable CompletionBlock)completion{
     // 文件操作，转发时将文件拷贝到转发的会话下
     if (message.messageType == PhotonIMMessageTypeImage || message.messageType == PhotonIMMessageTypeAudio) {
         PhotonIMMediaBody *imgBody = (PhotonIMMediaBody *)message.messageBody;
@@ -379,6 +379,7 @@ static PhotonMessageCenter *center = nil;
     sendMessage.chatType = message.chatType;
     [sendMessage setMesageBody:message.messageBody];
     [self _sendMessage:sendMessage completion:completion];
+    return sendMessage;
 }
 
 - (void)_sendMessage:(nullable PhotonIMMessage *)message completion:(nullable void(^)(BOOL succeed, PhotonIMError * _Nullable error ))completion{
@@ -421,6 +422,13 @@ static PhotonMessageCenter *center = nil;
 
 - (void)saveConversation:(PhotonIMConversation *)conversation{
     [[PhotonIMClient sharedClient] saveConversation:conversation];
+}
+
+- (void)resetAtType:(PhotonIMConversation *)conversation{
+    [self.imClient updateConversationAtType:conversation.chatType chatWith:conversation.chatWith atType:PhotonIMConversationAtTypeNoAt];
+}
+- (PhotonIMConversation *)findConversation:(PhotonIMChatType)chatType chatWith:(NSString *)chatWith{
+    return [self.imClient findConversation:chatType chatWith:chatWith];
 }
 
 #pragma mark --------- 文件操作相关 ----------------

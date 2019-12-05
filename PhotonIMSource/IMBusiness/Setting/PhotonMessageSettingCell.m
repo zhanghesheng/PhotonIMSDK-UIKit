@@ -32,14 +32,14 @@
     self.titleLabel.text = item.settingName;
 
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.contentView).offset(20);
+        make.left.mas_equalTo(self.contentView).offset(10);
         make.centerY.mas_equalTo(self.contentView);
         make.width.mas_equalTo(100);
         make.height.mas_equalTo(40);
     }];
     self.settingSwitch.on = item.open;
     [self.settingSwitch mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.contentView).offset(-13);
+        make.right.mas_equalTo(self.contentView).offset(-10);
         make.centerY.mas_equalTo(self.contentView);
         make.width.mas_equalTo(50);
         make.height.mas_equalTo(28);
