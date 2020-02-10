@@ -138,7 +138,7 @@
 - (void)addItem:(PhotonBaseTableItem *)item{
     __weak typeof(self)weakSelf = self;
        [self runPhotonLoadDataQueue:^{
-           [weakSelf.addDataRefreshUISource addEventSource:item];
+           [weakSelf.addDataRefreshUISource addEventSource:@[item]];
        }];
 }
 - (PhotonIMDispatchSourceEventBlock)addCellEventBlock{
@@ -150,14 +150,18 @@
     };
     return eventBlock;
 }
-- (void)_addItem:(PhotonBaseTableItem *)item{
+- (void)_addItem:(NSArray<PhotonBaseTableItem *> *)items{
     NSInteger index = self.model.items.count;
-    [self.model.items addObject:item];
+    [self.model.items addObjectsFromArray:items];
     if(!self.dataSource || self.dataSource.items == 0){
         return;
     }
-    [self.dataSource.items addObject:item];
-    [self insert:@[@(index)] animated:YES];
+    [self.dataSource.items addObjectsFromArray:items];
+    NSMutableArray *indexs = [NSMutableArray arrayWithCapacity:items.count];
+    [items enumerateObjectsUsingBlock:^(PhotonBaseTableItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [indexs addObject:@(index+idx)];
+    }];
+    [self insert:indexs animated:YES];
 }
 
 - (void)updateItem:(PhotonBaseTableItem *)item{
